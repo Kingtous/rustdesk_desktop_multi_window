@@ -9,6 +9,8 @@
 #include "include/desktop_multi_window/desktop_multi_window_plugin.h"
 #include "desktop_multi_window_plugin_internal.h"
 
+extern void fl_register_plugins(FlPluginRegistry* registry);
+
 namespace {
 
 WindowCreatedCallback _g_window_created_callback = nullptr;
@@ -46,6 +48,8 @@ FlutterWindow::FlutterWindow(
   if (_g_window_created_callback) {
     _g_window_created_callback(FL_PLUGIN_REGISTRY(fl_view));
   }
+
+  fl_register_plugins(FL_PLUGIN_REGISTRY(fl_view));
   g_autoptr(FlPluginRegistrar)
       desktop_multi_window_registrar =
       fl_plugin_registry_get_registrar_for_plugin(FL_PLUGIN_REGISTRY(fl_view), "DesktopMultiWindowPlugin");
