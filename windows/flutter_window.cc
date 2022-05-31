@@ -14,6 +14,8 @@
 #include "include/desktop_multi_window/desktop_multi_window_plugin.h"
 #include "multi_window_plugin_internal.h"
 
+extern void RegisterPlugins(flutter::PluginRegistry* registry);
+
 namespace {
 
 WindowCreatedCallback _g_window_created_callback = nullptr;
@@ -108,6 +110,7 @@ FlutterWindow::FlutterWindow(
   SetParent(view_handle, window_handle);
   MoveWindow(view_handle, 0, 0, frame.right - frame.left, frame.bottom - frame.top, true);
 
+  RegisterPlugins(flutter_controller_->engine());
   InternalMultiWindowPluginRegisterWithRegistrar(
       flutter_controller_->engine()->GetRegistrarForPlugin("DesktopMultiWindowPlugin"));
   window_channel_ = WindowChannel::RegisterWithRegistrar(
