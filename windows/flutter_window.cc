@@ -14,7 +14,19 @@
 #include "include/desktop_multi_window/desktop_multi_window_plugin.h"
 #include "multi_window_plugin_internal.h"
 
-extern void RegisterPlugins(flutter::PluginRegistry* registry);
+/// RustDesk deps using method channel
+#include <bitsdojo_window_windows/bitsdojo_window_plugin.h>
+#include <url_launcher_windows/url_launcher_windows.h>
+#include <window_manager/window_manager_plugin.h>
+
+void RustDeskRegisterPlugins(flutter::PluginRegistry* registry) {
+    BitsdojoWindowPluginRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("BitsdojoWindowPlugin"));
+    UrlLauncherWindowsRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("UrlLauncherWindows"));
+    WindowManagerPluginRegisterWithRegistrar(
+        registry->GetRegistrarForPlugin("WindowManagerPlugin"));
+}
 
 namespace {
 
@@ -110,7 +122,7 @@ FlutterWindow::FlutterWindow(
   SetParent(view_handle, window_handle);
   MoveWindow(view_handle, 0, 0, frame.right - frame.left, frame.bottom - frame.top, true);
 
-  RegisterPlugins(flutter_controller_->engine());
+  RustDeskRegisterPlugins(flutter_controller_->engine());
   InternalMultiWindowPluginRegisterWithRegistrar(
       flutter_controller_->engine()->GetRegistrarForPlugin("DesktopMultiWindowPlugin"));
   window_channel_ = WindowChannel::RegisterWithRegistrar(
