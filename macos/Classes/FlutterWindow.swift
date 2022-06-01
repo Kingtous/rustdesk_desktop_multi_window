@@ -66,7 +66,7 @@ class FlutterWindow: BaseFlutterWindow {
     let flutterViewController = FlutterViewController(project: project)
     window.contentViewController = flutterViewController
 
-    RegisterGeneratedPlugins(registry: flutterViewController)
+    FlutterMultiWindowPlugin.RegisterGeneratedPlugins!(flutterViewController)
     let plugin = flutterViewController.registrar(forPlugin: "FlutterMultiWindowPlugin")
     FlutterMultiWindowPlugin.registerInternal(with: plugin)
     let windowChannel = WindowChannel.register(with: plugin, windowId: id)

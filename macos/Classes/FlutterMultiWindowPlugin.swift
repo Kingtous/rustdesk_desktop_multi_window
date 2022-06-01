@@ -2,6 +2,8 @@ import Cocoa
 import FlutterMacOS
 
 public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
+  public static var RegisterGeneratedPlugins: ((FlutterPluginRegistry) -> Void)?
+  
   static func registerInternal(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "mixin.one/flutter_multi_window", binaryMessenger: registrar.messenger)
     let instance = FlutterMultiWindowPlugin()
