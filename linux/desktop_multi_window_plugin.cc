@@ -12,6 +12,8 @@
   (G_TYPE_CHECK_INSTANCE_CAST((obj), desktop_multi_window_plugin_get_type(), \
                               DesktopMultiWindowPlugin))
 
+extern bool rustdesk_is_subwindow;
+
 struct _DesktopMultiWindowPlugin {
   GObject parent_instance;
 };
@@ -110,6 +112,10 @@ void desktop_multi_window_plugin_register_with_registrar_internal(FlPluginRegist
 }
 
 void desktop_multi_window_plugin_register_with_registrar(FlPluginRegistrar *registrar) {
+  if (rustdesk_is_subwindow) {
+    g_info("[rustdesk multi-window plugin] subwindow opened, skipping desktop_multi_window_plugin_register_with_registrar");
+    return;
+  }
   desktop_multi_window_plugin_register_with_registrar_internal(registrar);
   auto view = fl_plugin_registrar_get_view(registrar);
   auto window = gtk_widget_get_toplevel(GTK_WIDGET(view));

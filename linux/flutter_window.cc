@@ -11,6 +11,8 @@
 
 extern void fl_register_plugins(FlPluginRegistry* registry);
 
+bool rustdesk_is_subwindow = false;
+
 namespace {
 
 WindowCreatedCallback _g_window_created_callback = nullptr;
@@ -48,7 +50,8 @@ FlutterWindow::FlutterWindow(
   if (_g_window_created_callback) {
     _g_window_created_callback(FL_PLUGIN_REGISTRY(fl_view));
   }
-
+  // indicate to plugin injections using extern
+  rustdesk_is_subwindow = true;
   fl_register_plugins(FL_PLUGIN_REGISTRY(fl_view));
   g_autoptr(FlPluginRegistrar)
       desktop_multi_window_registrar =
