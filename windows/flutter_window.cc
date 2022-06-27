@@ -15,21 +15,21 @@
 #include "multi_window_plugin_internal.h"
 
 /// RustDesk deps using method channel
-#include <bitsdojo_window_windows/bitsdojo_window_plugin.h>
+// #include <bitsdojo_window_windows/bitsdojo_window_plugin.h>
 #include <url_launcher_windows/url_launcher_windows.h>
-#include <window_manager/window_manager_plugin.h>
-#include <screen_retriever/screen_retriever_plugin.h>
+// #include <window_manager/window_manager_plugin.h>
+// #include <screen_retriever/screen_retriever_plugin.h>
 #include <tray_manager/tray_manager_plugin.h>
 
 void RustDeskRegisterPlugins(flutter::PluginRegistry* registry) {
-    BitsdojoWindowPluginRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("BitsdojoWindowPlugin"));
+    // BitsdojoWindowPluginRegisterWithRegistrar(
+    //    registry->GetRegistrarForPlugin("BitsdojoWindowPlugin"));
     UrlLauncherWindowsRegisterWithRegistrar(
         registry->GetRegistrarForPlugin("UrlLauncherWindows"));
-    WindowManagerPluginRegisterWithRegistrar(
-        registry->GetRegistrarForPlugin("WindowManagerPlugin"));
-    ScreenRetrieverPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("ScreenRetrieverPlugin"));
+    // WindowManagerPluginRegisterWithRegistrar(
+    //     registry->GetRegistrarForPlugin("WindowManagerPlugin"));
+    // ScreenRetrieverPluginRegisterWithRegistrar(
+    //   registry->GetRegistrarForPlugin("ScreenRetrieverPlugin"));
     TrayManagerPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("TrayManagerPlugin"));
 }
