@@ -96,3 +96,11 @@ void WindowChannel::InvokeMethod(
       }, user_data);
 }
 
+
+void WindowChannel::InvokeMethodSelfVoid(const gchar* method, FlValue *arguments) {
+  auto args = fl_value_new_map();
+  fl_value_set(args, fl_value_new_string("arguments"), arguments);
+  fl_value_set(args, fl_value_new_string("fromWindowId"), fl_value_new_int(0));
+  fl_method_channel_invoke_method(
+          fl_method_channel_, method, args, nullptr, nullptr, nullptr);
+}

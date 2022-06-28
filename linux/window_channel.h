@@ -37,6 +37,8 @@ class WindowChannel {
                     FlMethodCall *method_call
   );
 
+  void InvokeMethodSelfVoid(const gchar* method, FlValue *arguments);
+
  private:
 
   int64_t window_id_;

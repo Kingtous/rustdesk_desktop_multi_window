@@ -30,14 +30,6 @@ FlutterWindow::FlutterWindow(
   gtk_window_set_position(GTK_WINDOW(window_), GTK_WIN_POS_CENTER);
   gtk_widget_show(GTK_WIDGET(window_));
 
-  g_signal_connect(window_, "destroy", G_CALLBACK(+[](GtkWidget *, gpointer arg) {
-    auto *self = static_cast<FlutterWindow *>(arg);
-    if (auto callback = self->callback_.lock()) {
-      callback->OnWindowClose(self->id_);
-      callback->OnWindowDestroy(self->id_);
-    }
-  }), this);
-
   g_autoptr(FlDartProject)
       project = fl_dart_project_new();
   const char *entrypoint_args[] = {"multi_window", g_strdup_printf("%ld", id_), args.c_str(), nullptr};
@@ -59,6 +51,20 @@ FlutterWindow::FlutterWindow(
   desktop_multi_window_plugin_register_with_registrar_internal(desktop_multi_window_registrar);
 
   window_channel_ = WindowChannel::RegisterWithRegistrar(desktop_multi_window_registrar, id_);
+
+  g_signal_connect(window_, "destroy", G_CALLBACK(+[](GtkWidget *, gpointer arg) {
+    auto *self = static_cast<FlutterWindow *>(arg);
+    // destory hook
+    if (auto channel = self->GetWindowChannel()) {
+        auto args = fl_value_new_map();
+        channel->InvokeMethodSelfVoid("onDestroy", args);
+    }
+    if (auto callback = self->callback_.lock()) {
+      callback->OnWindowClose(self->id_);
+      callback->OnWindowDestroy(self->id_);
+    }
+  }), this);
+
 
   gtk_widget_grab_focus(GTK_WIDGET(fl_view));
   gtk_widget_hide(GTK_WIDGET(window_));
