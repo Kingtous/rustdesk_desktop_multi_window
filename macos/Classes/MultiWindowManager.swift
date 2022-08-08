@@ -113,6 +113,13 @@ protocol WindowManagerDelegate: AnyObject {
 
 extension MultiWindowManager: WindowManagerDelegate {
   func onClose(windowId: Int64) {
+    // notify flutter to close this window gracefully
+    guard let window = self.windows[windowId] else {
+      return
+    }
+    let args = NSDictionary()
+    debugPrint("invoke onDestroy \(windowId)")
+    window.windowChannel.invokeMethod(fromWindowId: 0, method: "onDestroy", arguments: args, result: nil)
     windows.removeValue(forKey: windowId)
   }
 }

@@ -46,7 +46,7 @@ class WindowChannel: NSObject, FlutterPlugin {
     }
   }
 
-  func invokeMethod(fromWindowId: Int64, method: String, arguments: Any?, result: @escaping FlutterResult) {
+  func invokeMethod(fromWindowId: Int64, method: String, arguments: Any?, result: FlutterResult?) {
     let args = [
       "fromWindowId": fromWindowId,
       "arguments": arguments,
