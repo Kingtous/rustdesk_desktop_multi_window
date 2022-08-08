@@ -183,10 +183,10 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
       break;
     }
     case WM_DESTROY: {
-      // Give onDestory callback to Flutter to close window gracefully
+      // Give onDestroy callback to Flutter to close window gracefully
       if (window_channel_) {
           auto args = flutter::EncodableValue(flutter::EncodableMap());
-          window_channel_->InvokeMethod(0, "onDestory", &args);
+          window_channel_->InvokeMethod(0, "onDestroy", &args);
       }
       Destroy();
       if (!destroyed_) {
