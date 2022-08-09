@@ -63,6 +63,7 @@ void BaseFlutterWindow::Focus() {
   if (!handle) {
     return;
   }
+  SetWindowPos(handle, HWND_TOP, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
   SetForegroundWindow(handle);
 }
 
