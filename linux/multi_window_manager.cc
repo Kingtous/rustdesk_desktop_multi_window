@@ -98,6 +98,13 @@ void MultiWindowManager::Show(int64_t id) {
   }
 }
 
+void MultiWindowManager::Focus(int64_t id) {
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    window->second->Focus();
+  }
+}
+
 void MultiWindowManager::Hide(int64_t id) {
   auto window = windows_.find(id);
   if (window != windows_.end()) {

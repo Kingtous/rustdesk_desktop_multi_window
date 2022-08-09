@@ -129,6 +129,13 @@ void MultiWindowManager::Center(int64_t id) {
   }
 }
 
+void MultiWindowManager::Focus(int64_t id) {
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    window->second->Focus();
+  }
+}
+
 std::vector<int64_t> MultiWindowManager::GetAllSubWindowIds() {
   std::vector<int64_t> ids;
   for (auto &window : windows_) {

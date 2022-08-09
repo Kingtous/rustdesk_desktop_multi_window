@@ -23,6 +23,8 @@ class BaseFlutterWindow {
 
   void SetTitle(const std::string &title);
 
+  void Focus();
+
   void SetBounds(double_t x, double_t y, double_t width, double_t height);
 
   void Center();

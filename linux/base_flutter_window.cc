@@ -20,6 +20,14 @@ void BaseFlutterWindow::Hide() {
   gtk_widget_hide(GTK_WIDGET(window));
 }
 
+void BaseFlutterWindow::Focus() {
+  auto window = GetWindow();
+  if (!window) {
+    return;
+  }
+  gtk_window_present(GTK_WIDGET(window));
+}
+
 void BaseFlutterWindow::SetBounds(double_t x, double_t y, double_t width, double_t height) {
   auto window = GetWindow();
   if (!window) {

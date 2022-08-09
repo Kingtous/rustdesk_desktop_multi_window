@@ -62,4 +62,9 @@ class WindowControllerMainImpl extends WindowController {
       'name': name,
     });
   }
+  
+  @override
+  Future<void> focus() {
+    return _channel.invokeMethod('focus', _id);
+  }
 }

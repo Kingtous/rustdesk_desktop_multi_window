@@ -27,6 +27,9 @@ abstract class WindowController {
   /// Hide the window.
   Future<void> hide();
 
+  /// Focus the window.
+  Future<void> focus();
+
   /// Set the window frame rect.
   Future<void> setFrame(Rect frame);
 

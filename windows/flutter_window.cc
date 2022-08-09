@@ -250,6 +250,7 @@ void FlutterWindow::Destroy() {
 }
 
 FlutterWindow::~FlutterWindow() {
+  this->Destroy();
   if (window_handle_) {
     std::cout << "window_handle leak." << std::endl;
   }

@@ -96,6 +96,11 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
     auto window_ids = MultiWindowManager::Instance()->GetAllSubWindowIds();
     result->Success(flutter::EncodableValue(window_ids));
     return;
+  } else if (method_call.method_name() == "focus") {
+    auto window_id = method_call.arguments()->LongValue();
+    MultiWindowManager::Instance()->Focus(window_id);
+    result->Success();
+    return;
   }
   result->NotImplemented();
 }

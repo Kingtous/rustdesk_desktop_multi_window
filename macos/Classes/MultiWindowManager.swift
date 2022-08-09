@@ -78,6 +78,14 @@ class MultiWindowManager {
     window.center()
   }
 
+  func focus(windowId: Int64) {
+    guard let window = windows[windowId] else {
+      debugPrint("window \(windowId) not exists.")
+      return
+    }
+    window.focus()
+  }
+
   func setFrame(windowId: Int64, frame: NSRect) {
     guard let window = windows[windowId] else {
       debugPrint("window \(windowId) not exists.")

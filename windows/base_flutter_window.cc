@@ -58,6 +58,14 @@ void BaseFlutterWindow::Center() {
   SetWindowPos(handle, nullptr, rc.left, rc.top, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
 }
 
+void BaseFlutterWindow::Focus() {
+  auto handle = GetWindowHandle();
+  if (!handle) {
+    return;
+  }
+  SetForegroundWindow(handle);
+}
+
 void BaseFlutterWindow::SetBounds(double_t x, double_t y, double_t width, double_t height) {
   auto handle = GetWindowHandle();
   if (!handle) {

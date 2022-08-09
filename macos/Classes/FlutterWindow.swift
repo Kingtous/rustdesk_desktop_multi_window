@@ -31,6 +31,11 @@ class BaseFlutterWindow: NSObject {
     window.center()
   }
 
+  func focus() {
+    NSApp.activate(ignoringOtherApps: false)
+    window.makeKeyAndOrderFront(nil)
+  }
+
   func setFrame(frame: NSRect) {
     window.setFrame(frame, display: false, animate: true)
   }

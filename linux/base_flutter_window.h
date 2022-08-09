@@ -22,6 +22,8 @@ class BaseFlutterWindow {
 
   void Hide();
 
+  void Focus();
+
   void Close();
 
   void SetTitle(const std::string &title);
