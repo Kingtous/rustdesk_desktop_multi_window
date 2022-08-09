@@ -63,8 +63,22 @@ void BaseFlutterWindow::Focus() {
   if (!handle) {
     return;
   }
+  Restore();
   SetWindowPos(handle, HWND_TOP, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
   SetForegroundWindow(handle);
+}
+
+void BaseFlutterWindow::Restore() {
+  auto handle = GetWindowHandle();
+  if (!handle) {
+    return;
+  }
+  WINDOWPLACEMENT windowPlacement;
+  GetWindowPlacement(handle, &windowPlacement);
+
+  if (windowPlacement.showCmd != SW_NORMAL) {
+    PostMessage(handle, WM_SYSCOMMAND, SC_RESTORE, 0);
+  }
 }
 
 void BaseFlutterWindow::SetBounds(double_t x, double_t y, double_t width, double_t height) {

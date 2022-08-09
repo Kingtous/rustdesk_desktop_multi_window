@@ -25,7 +25,8 @@ void BaseFlutterWindow::Focus() {
   if (!window) {
     return;
   }
-  gtk_window_present(GTK_WIDGET(window));
+  gtk_window_deiconify(window);
+  gtk_window_present(window);
 }
 
 void BaseFlutterWindow::SetBounds(double_t x, double_t y, double_t width, double_t height) {

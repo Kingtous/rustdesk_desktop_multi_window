@@ -32,6 +32,7 @@ class BaseFlutterWindow: NSObject {
   }
 
   func focus() {
+    window.deminiaturize(nil)
     NSApp.activate(ignoringOtherApps: false)
     window.makeKeyAndOrderFront(nil)
   }
