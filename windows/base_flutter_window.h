@@ -27,6 +27,12 @@ class BaseFlutterWindow {
 
   void SetFullscreen(bool fullscreen);
 
+  void Maximize(const flutter::EncodableMap& args);
+
+  void SetTitleBarStyle(const flutter::EncodableMap& args);
+
+  void SetAsFrameless();
+
   void Restore();
 
   void SetBounds(double_t x, double_t y, double_t width, double_t height);
@@ -36,6 +42,18 @@ class BaseFlutterWindow {
  protected:
 
   virtual HWND GetWindowHandle() = 0;
+
+private:
+	bool g_is_window_fullscreen = false;
+	std::string g_title_bar_style_before_fullscreen;
+	bool g_is_frameless_before_fullscreen;
+	RECT g_frame_before_fullscreen;
+	bool g_maximized_before_fullscreen;
+	LONG g_style_before_fullscreen;
+	LONG g_ex_style_before_fullscreen;
+
+	std::string title_bar_style_ = "normal";
+	bool is_frameless_ = false;
 
 };
 

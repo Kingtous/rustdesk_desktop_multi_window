@@ -104,7 +104,7 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
   } else if (method_call.method_name() == "setFullscreen") {
     auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
     auto window_id = arguments->at(flutter::EncodableValue("windowId")).LongValue();
-    auto fullscreen = arguments->at(flutter::EncodableValue("fullscreen")).BoolValue();
+    auto fullscreen = std::get<bool>(arguments->at(flutter::EncodableValue("fullscreen")));
     MultiWindowManager::Instance()->SetFullscreen(window_id, fullscreen);
     result->Success();
     return;
