@@ -119,6 +119,13 @@ void MultiWindowManager::Close(int64_t id) {
   }
 }
 
+void MultiWindowManager::SetFullscreen(int64_t id, bool fullscreen) {
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    window->second->SetFullscreen(fullscreen);
+  }
+}
+
 void MultiWindowManager::SetFrame(int64_t id, double x, double y, double width, double height) {
   auto window = windows_.find(id);
   if (window != windows_.end()) {

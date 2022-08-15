@@ -68,6 +68,10 @@ void BaseFlutterWindow::Focus() {
   SetForegroundWindow(handle);
 }
 
+void BaseFlutterWindow::SetFullscreen(bool fullscreen) {
+
+}
+
 void BaseFlutterWindow::Restore() {
   auto handle = GetWindowHandle();
   if (!handle) {

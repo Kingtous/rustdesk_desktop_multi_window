@@ -82,6 +82,12 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
       let windowId = call.arguments as! Int64
       MultiWindowManager.shared.focus(windowId: windowId)
       result(nil)
+    case "setTitle":
+      let arguments = call.arguments as! [String: Any?]
+      let windowId = arguments["windowId"] as! Int64
+      let fullscreen = arguments["fullscreen"] as! Bool
+      MultiWindowManager.shared.setFullscreen(windowId: windowId, fullscreen: fullscreen)
+      result(nil)
     default:
       result(FlutterMethodNotImplemented)
     }

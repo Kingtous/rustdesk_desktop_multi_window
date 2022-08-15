@@ -30,6 +30,9 @@ abstract class WindowController {
   /// Focus the window.
   Future<void> focus();
 
+  /// Make the window full screen or not
+  Future<void> setFullscreen(bool fullscreen);
+
   /// Set the window frame rect.
   Future<void> setFrame(Rect frame);
 

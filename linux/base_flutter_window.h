@@ -24,6 +24,8 @@ class BaseFlutterWindow {
 
   void Focus();
 
+  void SetFullscreen(bool fullscreen);
+
   void Close();
 
   void SetTitle(const std::string &title);

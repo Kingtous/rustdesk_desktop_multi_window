@@ -37,6 +37,18 @@ class BaseFlutterWindow: NSObject {
     window.makeKeyAndOrderFront(nil)
   }
 
+  func setFullscreen(fullscreen: Bool) {
+    if (fullscreen) {
+      if (!window.styleMask.contains(.fullScreen)) {
+          window.toggleFullScreen(nil)
+      }
+    } else {
+      if (window.styleMask.contains(.fullScreen)) {
+          window.toggleFullScreen(nil)
+      }
+    }
+  }
+
   func setFrame(frame: NSRect) {
     window.setFrame(frame, display: false, animate: true)
   }

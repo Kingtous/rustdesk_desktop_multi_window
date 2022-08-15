@@ -86,6 +86,14 @@ class MultiWindowManager {
     window.focus()
   }
 
+  func focus(windowId: Int64, fullscreen: Bool) {
+      guard let window = windows[windowId] else {
+        debugPrint("window \(windowId) not exists.")
+        return
+      }
+      window.setFullscreen(fullscreen)
+    }
+
   func setFrame(windowId: Int64, frame: NSRect) {
     guard let window = windows[windowId] else {
       debugPrint("window \(windowId) not exists.")

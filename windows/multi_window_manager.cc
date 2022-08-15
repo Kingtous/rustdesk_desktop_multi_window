@@ -136,6 +136,13 @@ void MultiWindowManager::Focus(int64_t id) {
   }
 }
 
+void MultiWindowManager::SetFullscreen(int64_t id, bool fullscreen) {
+auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    window->second->SetFullscreen(fullscreen);
+  }
+}
+
 std::vector<int64_t> MultiWindowManager::GetAllSubWindowIds() {
   std::vector<int64_t> ids;
   for (auto &window : windows_) {

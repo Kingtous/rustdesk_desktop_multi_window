@@ -67,4 +67,12 @@ class WindowControllerMainImpl extends WindowController {
   Future<void> focus() {
     return _channel.invokeMethod('focus', _id);
   }
+
+  @override
+  Future<void> setFullscreen(bool fullscreen) {
+    return _channel.invokeMethod('setFullscreen', <String, dynamic>{
+      'windowId': _id,
+      'fullscreen': fullscreen
+    });
+  }
 }
