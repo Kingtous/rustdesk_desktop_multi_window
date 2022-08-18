@@ -34,9 +34,20 @@ class BaseFlutterWindow {
 
   void Center();
 
- protected:
+  void StartDragging();
 
+  void Minimize();
+
+  bool IsMaximized();
+
+  void Maximize();
+
+  void Unmaximize();
+
+protected:
   virtual GtkWindow* GetWindow() = 0;
+
+  bool maximized = false;
 };
 
 #endif //DESKTOP_MULTI_WINDOW_LINUX_BASE_FLUTTER_WINDOW_H_

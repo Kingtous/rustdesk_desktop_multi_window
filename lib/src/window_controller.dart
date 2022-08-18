@@ -30,6 +30,21 @@ abstract class WindowController {
   /// Focus the window.
   Future<void> focus();
 
+  /// Start dragging the window.
+  Future<void> startDragging();
+
+  /// Maximize the window.
+  Future<void> maximize();
+
+  /// Unmaximize the window.
+  Future<void> unmaximize();
+
+  /// Judge if the window is maximized.
+  Future<bool> isMaximized();
+
+  /// Minimize the window
+  Future<void> minimize();
+
   /// Make the window full screen or not
   Future<void> setFullscreen(bool fullscreen);
 

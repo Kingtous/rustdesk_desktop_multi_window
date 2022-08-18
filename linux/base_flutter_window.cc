@@ -72,3 +72,48 @@ void BaseFlutterWindow::Close() {
   }
   gtk_window_close(GTK_WINDOW(window));
 }
+
+void BaseFlutterWindow::StartDragging() {
+  auto window = GetWindow();
+  if (!window) {
+    return;
+  }
+  auto screen = gtk_window_get_screen(window);
+  auto display = gdk_screen_get_display(screen);
+  auto seat = gdk_display_get_default_seat(display);
+  auto device = gdk_seat_get_pointer(seat);
+
+  gint root_x, root_y;
+  gdk_device_get_position(device, nullptr, &root_x, &root_y);
+  guint32 timestamp = (guint32)g_get_monotonic_time();
+
+  gtk_window_begin_move_drag(window, 1, root_x, root_y, timestamp);
+}
+
+bool BaseFlutterWindow::IsMaximized() { return this->maximized; }
+
+void BaseFlutterWindow::Maximize() {
+  auto window = GetWindow();
+  if (!window) {
+    return;
+  }
+  gtk_window_maximize(window);
+  this->maximized = true;
+}
+
+void BaseFlutterWindow::Unmaximize() {
+  auto window = GetWindow();
+  if (!window) {
+    return;
+  }
+  gtk_window_unmaximize(window);
+  this->maximized = false;
+}
+
+void BaseFlutterWindow::Minimize() {
+  auto window = GetWindow();
+  if (!window) {
+    return;
+  }
+  gtk_window_iconify(window);
+}

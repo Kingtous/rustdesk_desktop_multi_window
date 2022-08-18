@@ -49,8 +49,17 @@ class MultiWindowManager : public std::enable_shared_from_this<MultiWindowManage
 
   void OnWindowDestroy(int64_t id) override;
 
- private:
+  void StartDragging(int64_t id);
 
+  void Minimize(int64_t id);
+
+  void Maximize(int64_t id);
+
+  bool IsMaximized(int64_t id);
+
+  void Unmaximize(int64_t id);
+
+private:
   std::map<int64_t, std::unique_ptr<BaseFlutterWindow>> windows_;
 
   void HandleMethodCall(int64_t from_window_id,

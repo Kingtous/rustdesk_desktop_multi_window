@@ -75,4 +75,29 @@ class WindowControllerMainImpl extends WindowController {
       'fullscreen': fullscreen
     });
   }
+  
+  @override
+  Future<void> startDragging() {
+    return _channel.invokeMethod('startDragging', _id);
+  }
+
+  @override
+  Future<bool> isMaximized() async {
+    return (await _channel.invokeMethod<bool>('isMaximized', _id)) ?? false;
+  }
+
+  @override
+  Future<void> maximize() {
+    return _channel.invokeMethod('maximize', _id);
+  }
+
+  @override
+  Future<void> minimize() {
+    return _channel.invokeMethod('minimize', _id);
+  }
+
+  @override
+  Future<void> unmaximize() {
+    return _channel.invokeMethod('unmaximize', _id);
+  }
 }

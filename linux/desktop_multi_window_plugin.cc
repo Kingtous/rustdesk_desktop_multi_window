@@ -83,6 +83,32 @@ static void desktop_multi_window_plugin_handle_method_call(
     auto fullscreen = fl_value_get_bool(fl_value_lookup_string(args, "fullscreen"));
     MultiWindowManager::Instance()->SetFullscreen(window_id, fullscreen);
     response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  } else if (strcmp(method, "startDragging") == 0) {
+    auto *args = fl_method_call_get_args(method_call);
+    auto window_id = fl_value_get_int(args);
+    MultiWindowManager::Instance()->StartDragging(window_id);
+    response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  } else if (strcmp(method, "minimize") == 0) {
+    auto *args = fl_method_call_get_args(method_call);
+    auto window_id = fl_value_get_int(args);
+    MultiWindowManager::Instance()->Minimize(window_id);
+    response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  } else if (strcmp(method, "maximize") == 0) {
+    auto *args = fl_method_call_get_args(method_call);
+    auto window_id = fl_value_get_int(args);
+    MultiWindowManager::Instance()->Maximize(window_id);
+    response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  } else if (strcmp(method, "unmaximize") == 0) {
+    auto *args = fl_method_call_get_args(method_call);
+    auto window_id = fl_value_get_int(args);
+    MultiWindowManager::Instance()->Unmaximize(window_id);
+    response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  } else if (strcmp(method, "isMaximized") == 0) {
+    auto *args = fl_method_call_get_args(method_call);
+    auto window_id = fl_value_get_int(args);
+    auto isMaximized = MultiWindowManager::Instance()->IsMaximized(window_id);
+    g_autoptr(FlValue) result = fl_value_new_bool(isMaximized);
+    response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
   } else {
     response = FL_METHOD_RESPONSE(fl_method_not_implemented_response_new());
   }
