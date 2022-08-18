@@ -100,4 +100,10 @@ class WindowControllerMainImpl extends WindowController {
   Future<void> unmaximize() {
     return _channel.invokeMethod('unmaximize', _id);
   }
+  
+  @override
+  Future<void> showTitleBar(bool show) {
+    return _channel.invokeMethod(
+        'showTitleBar', <String, dynamic>{'windowId': _id, 'show': show});
+  }
 }

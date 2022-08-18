@@ -59,6 +59,8 @@ class MultiWindowManager : public std::enable_shared_from_this<MultiWindowManage
 
   void Unmaximize(int64_t id);
 
+  void ShowTitlebar(int64_t id, bool show);
+
 private:
   std::map<int64_t, std::unique_ptr<BaseFlutterWindow>> windows_;
 

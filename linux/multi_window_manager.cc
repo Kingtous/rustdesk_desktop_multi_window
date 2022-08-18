@@ -193,6 +193,13 @@ void MultiWindowManager::Unmaximize(int64_t id) {
   }
 }
 
+void MultiWindowManager::ShowTitlebar(int64_t id, bool show) {
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    window->second->ShowTitlebar(show);
+  }
+}
+
 void MultiWindowManager::OnWindowClose(int64_t id) {}
 
 void MultiWindowManager::OnWindowDestroy(int64_t id) {

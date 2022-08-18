@@ -44,6 +44,8 @@ class BaseFlutterWindow {
 
   void Unmaximize();
 
+  void ShowTitlebar(bool show);
+
 protected:
   virtual GtkWindow* GetWindow() = 0;
 

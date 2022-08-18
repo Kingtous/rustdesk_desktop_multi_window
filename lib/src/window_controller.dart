@@ -45,6 +45,9 @@ abstract class WindowController {
   /// Minimize the window
   Future<void> minimize();
 
+  /// show the window of window
+  Future<void> showTitleBar(bool show);
+
   /// Make the window full screen or not
   Future<void> setFullscreen(bool fullscreen);
 

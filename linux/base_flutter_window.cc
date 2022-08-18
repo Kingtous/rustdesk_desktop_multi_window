@@ -117,3 +117,11 @@ void BaseFlutterWindow::Minimize() {
   }
   gtk_window_iconify(window);
 }
+
+void BaseFlutterWindow::ShowTitlebar(bool show) {
+  auto window = GetWindow();
+  if (!window) {
+    return;
+  }
+  gtk_window_set_decorated(window, show);
+}
