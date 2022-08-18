@@ -29,6 +29,18 @@ class MultiWindowManager : public std::enable_shared_from_this<MultiWindowManage
 
   void Focus(int64_t id);
 
+  void StartDragging(int64_t id);
+
+  void Minimize(int64_t id);
+
+  void Maximize(int64_t id);
+
+  bool IsMaximized(int64_t id);
+
+  void Unmaximize(int64_t id);
+
+  void ShowTitlebar(int64_t id, bool show);
+
   void SetFullscreen(int64_t id, bool fullscreen);
 
   void Close(int64_t id);

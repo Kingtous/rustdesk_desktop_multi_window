@@ -39,6 +39,20 @@ class BaseFlutterWindow {
 
   void Center();
 
+  void StartDragging();
+
+  void Minimize();
+
+  bool IsMaximized();
+
+  void Maximize();
+
+  void Unmaximize();
+
+  void ShowTitlebar(bool show);
+
+  std::string title_bar_style_ = "normal";
+
  protected:
 
   virtual HWND GetWindowHandle() = 0;
@@ -51,8 +65,6 @@ private:
 	bool g_maximized_before_fullscreen;
 	LONG g_style_before_fullscreen;
 	LONG g_ex_style_before_fullscreen;
-
-	std::string title_bar_style_ = "normal";
 	bool is_frameless_ = false;
 
 };

@@ -180,3 +180,45 @@ void MultiWindowManager::HandleWindowChannelCall(
   target_window_channel->InvokeMethod(from_window_id, call, arguments, std::move(result));
 }
 
+void MultiWindowManager::StartDragging(int64_t id) {
+    auto window = windows_.find(id);
+    if (window != windows_.end()) {
+        window->second->StartDragging();
+    }
+}
+
+void MultiWindowManager::Minimize(int64_t id) {
+    auto window = windows_.find(id);
+    if (window != windows_.end()) {
+        window->second->Minimize();
+    }
+}
+
+void MultiWindowManager::Maximize(int64_t id) {
+    auto window = windows_.find(id);
+    if (window != windows_.end()) {
+        window->second->Maximize();
+    }
+}
+
+bool MultiWindowManager::IsMaximized(int64_t id) {
+    auto window = windows_.find(id);
+    if (window != windows_.end()) {
+        return window->second->IsMaximized();
+    }
+    return false;
+}
+
+void MultiWindowManager::Unmaximize(int64_t id) {
+    auto window = windows_.find(id);
+    if (window != windows_.end()) {
+        window->second->Unmaximize();
+    }
+}
+
+void MultiWindowManager::ShowTitlebar(int64_t id, bool show) {
+    auto window = windows_.find(id);
+    if (window != windows_.end()) {
+        window->second->ShowTitlebar(show);
+    }
+}

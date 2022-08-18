@@ -5,6 +5,7 @@
 #include "base_flutter_window.h"
 
 #include <dwmapi.h>
+#include <iostream>
 // #include <shobjidl_core.h>
 
 #pragma comment(lib, "dwmapi.lib")
@@ -155,6 +156,85 @@ void BaseFlutterWindow::SetFullscreen(bool fullscreen) {
     g_is_window_fullscreen = fullscreen;
 }
 
+void BaseFlutterWindow::StartDragging() {
+    auto window = GetWindowHandle();
+    if (!window) {
+        return;
+    }
+    ReleaseCapture();
+    SendMessage(window, WM_SYSCOMMAND, SC_MOVE | HTCAPTION, 0);
+}
+
+bool BaseFlutterWindow::IsMaximized() { 
+    auto window = GetWindowHandle();
+    if (!window) {
+        return false;
+    }
+    WINDOWPLACEMENT windowPlacement;
+    GetWindowPlacement(window, &windowPlacement);
+
+    return windowPlacement.showCmd == SW_MAXIMIZE;
+}
+
+void BaseFlutterWindow::Maximize() {
+    auto window = GetWindowHandle();
+    if (!window) {
+        return;
+    }
+    WINDOWPLACEMENT windowPlacement;
+    GetWindowPlacement(window, &windowPlacement);
+    // non vertical now
+    if (windowPlacement.showCmd != SW_MAXIMIZE) {
+        PostMessage(window, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+    }
+}
+
+void BaseFlutterWindow::Unmaximize() {
+    auto window = GetWindowHandle();
+    if (!window) {
+        return;
+    }
+    WINDOWPLACEMENT windowPlacement;
+    GetWindowPlacement(window, &windowPlacement);
+
+    if (windowPlacement.showCmd != SW_NORMAL) {
+        PostMessage(window, WM_SYSCOMMAND, SC_RESTORE, 0);
+    }
+}
+
+void BaseFlutterWindow::Minimize() {
+    auto window = GetWindowHandle();
+    if (!window) {
+        return;
+    }
+    WINDOWPLACEMENT windowPlacement;
+    GetWindowPlacement(window, &windowPlacement);
+
+    if (windowPlacement.showCmd != SW_SHOWMINIMIZED) {
+        PostMessage(window, WM_SYSCOMMAND, SC_MINIMIZE, 0);
+    }
+}
+
+void BaseFlutterWindow::ShowTitlebar(bool show) {
+    auto window = GetWindowHandle();
+    if (!window) {
+        return;
+    }
+    this->title_bar_style_ = show ? "normal" : "hidden";
+    if (!show) {
+        LONG lStyle = GetWindowLong(window, GWL_STYLE);
+        SetWindowLong(window, GWL_STYLE, lStyle & ~WS_CAPTION);
+        SetWindowPos(window, NULL, 0, 0, 0, 0, SWP_NOSIZE
+            | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+    }
+    else {
+        LONG lStyle = GetWindowLong(window, GWL_STYLE);
+        SetWindowLong(window, GWL_STYLE, lStyle | WS_CAPTION);
+        SetWindowPos(window, NULL, 0, 0, 0, 0, SWP_NOSIZE
+            | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+    }
+}
+
 void BaseFlutterWindow::Maximize(const flutter::EncodableMap& args) {
     bool vertically =
         std::get<bool>(args.at(flutter::EncodableValue("vertically")));
@@ -191,6 +271,7 @@ void BaseFlutterWindow::SetTitleBarStyle(const flutter::EncodableMap& args) {
     SetWindowPos(hWnd, nullptr, rect.left, rect.top, 0, 0,
         SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE |
         SWP_FRAMECHANGED);
+    std::cout << "set title bar styled" << std::endl;
 }
 
 void BaseFlutterWindow::SetAsFrameless() {
@@ -252,8 +333,8 @@ void BaseFlutterWindow::Show() {
   if (!handle) {
     return;
   }
-  ShowWindow(handle, SW_SHOW);
-
+  ShowWindowAsync(handle, SW_SHOW);
+  SetForegroundWindow(handle);
 }
 
 void BaseFlutterWindow::Hide() {

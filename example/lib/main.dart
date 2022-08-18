@@ -5,18 +5,27 @@ import 'package:desktop_lifecycle/desktop_lifecycle.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_window_example/event_widget.dart';
+import 'package:window_manager/window_manager.dart';
 
-void main(List<String> args) {
+void main(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
   if (args.firstOrNull == 'multi_window') {
     final windowId = int.parse(args[1]);
     final argument = args[2].isEmpty
         ? const {}
         : jsonDecode(args[2]) as Map<String, dynamic>;
+    WindowController.fromWindowId(windowId).showTitleBar(false);
+    WindowController.fromWindowId(windowId).show();
+    WindowController.fromWindowId(windowId).focus();
     runApp(_ExampleSubWindow(
       windowController: WindowController.fromWindowId(windowId),
       args: argument,
     ));
   } else {
+    await windowManager.ensureInitialized();
+    Future.delayed(Duration(seconds: 5), () {
+      windowManager.setTitleBarStyle(TitleBarStyle.hidden);
+    });
     runApp(const _ExampleMainWindow());
   }
 }
@@ -94,7 +103,16 @@ class _ExampleSubWindow extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: GestureDetector(
+            onPanDown: (_) {
+              windowController.startDragging();
+            },
+            child: Row(
+              children: [
+                Expanded(child: Text("Example App"))
+              ]
+            ),
+          ),
         ),
         body: Column(
           children: [
@@ -130,6 +148,28 @@ class _ExampleSubWindow extends StatelessWidget {
                 windowController.setFullscreen(false);
               },
               child: const Text('cancel fullscreen'),
+            ),
+            TextButton(
+              onPressed: () async {
+                windowController.minimize();
+              },
+              child: const Text('minimize'),
+            ),
+            TextButton(
+              onPressed: () async {
+                if (await windowController.isMaximized()) {
+                  windowController.unmaximize();
+                } else {
+                  windowController.maximize();
+                }
+              },
+              child: const Text('maximize/unmaximize'),
+            ),
+            TextButton(
+              onPressed: () async {
+                windowController.close();
+              },
+              child: const Text('close window'),
             ),
             Expanded(child: EventWidget(controller: windowController)),
           ],

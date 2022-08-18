@@ -19,7 +19,7 @@
 #include <url_launcher_windows/url_launcher_windows.h>
 // #include <window_manager/window_manager_plugin.h>
 // #include <screen_retriever/screen_retriever_plugin.h>
-#include <tray_manager/tray_manager_plugin.h>
+// #include <tray_manager/tray_manager_plugin.h>
 
 void RustDeskRegisterPlugins(flutter::PluginRegistry* registry) {
     // BitsdojoWindowPluginRegisterWithRegistrar(
@@ -30,8 +30,23 @@ void RustDeskRegisterPlugins(flutter::PluginRegistry* registry) {
     //     registry->GetRegistrarForPlugin("WindowManagerPlugin"));
     // ScreenRetrieverPluginRegisterWithRegistrar(
     //   registry->GetRegistrarForPlugin("ScreenRetrieverPlugin"));
-    TrayManagerPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("TrayManagerPlugin"));
+    // TrayManagerPluginRegisterWithRegistrar(
+    //  registry->GetRegistrarForPlugin("TrayManagerPlugin"));
+}
+
+bool IsWindows11OrGreater() {
+  DWORD dwVersion = 0;
+  DWORD dwBuild = 0;
+
+#pragma warning(push)
+#pragma warning(disable : 4996)
+  dwVersion = GetVersion();
+  // Get the build number.
+  if (dwVersion < 0x80000000)
+    dwBuild = (DWORD)(HIWORD(dwVersion));
+#pragma warning(pop)
+
+  return dwBuild < 22000;
 }
 
 namespace {
@@ -164,6 +179,7 @@ LRESULT CALLBACK FlutterWindow::WndProc(HWND window, UINT message, WPARAM wparam
 
   return DefWindowProc(window, message, wparam, lparam);
 }
+#include <iostream>
 
 LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
 
@@ -229,6 +245,30 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
         SetFocus(child_content_);
       }
       return 0;
+    }
+
+    case WM_NCCALCSIZE: {
+      if (wparam && this->title_bar_style_ == "hidden") {
+        NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
+
+        // Add 8 pixel to the top border when maximized so the app isn't cut off
+        if (this->IsMaximized()) {
+          sz->rgrc[0].top += 8;
+        } else {
+          // on windows 10, if set to 0, there's a white line at the top
+          // of the app and I've yet to find a way to remove that.
+          sz->rgrc[0].top += IsWindows11OrGreater() ? 0 : 1;
+        }
+        sz->rgrc[0].right -= 8;
+        sz->rgrc[0].bottom -= 8;
+        sz->rgrc[0].left -= -8;
+
+        // Previously (WVR_HREDRAW | WVR_VREDRAW), but returning 0 or 1 doesn't
+        // actually break anything so I've set it to 0. Unless someone pointed a
+        // problem in the future.
+        std::cout << "hidden adjusted" << std::endl;
+        return 0;
+      }
     }
     default: break;
   }
