@@ -86,13 +86,61 @@ class MultiWindowManager {
     window.focus()
   }
 
-  func focus(windowId: Int64, fullscreen: Bool) {
+  func minimize(windowId: Int64) {
+    guard let window = windows[windowId] else {
+      debugPrint("window \(windowId) not exists.")
+      return
+    }
+    window.minimize()
+  }
+
+  func showTitleBar(windowId: Int64, show: Bool) {
+    guard let window = windows[windowId] else {
+      debugPrint("window \(windowId) not exists.")
+      return
+    }
+    window.showTitleBar(show: show)
+  }
+
+  func maximize(windowId: Int64) {
+    guard let window = windows[windowId] else {
+      debugPrint("window \(windowId) not exists.")
+      return
+    }
+    window.maximize()
+  }
+
+  func isMaximized(windowId: Int64) -> Bool {
+    guard let window = windows[windowId] else {
+      debugPrint("window \(windowId) not exists.")
+      return false
+    }
+    return window.isMaximized()
+  }
+
+  func startDragging(windowId: Int64) {
+    guard let window = windows[windowId] else {
+      debugPrint("window \(windowId) not exists.")
+      return
+    }
+    window.startDragging()
+  }
+
+  func unmaximize(windowId: Int64) {
+    guard let window = windows[windowId] else {
+      debugPrint("window \(windowId) not exists.")
+      return
+    }
+    window.unmaximize()
+  }
+
+  func setFullscreen(windowId: Int64, fullscreen: Bool) {
       guard let window = windows[windowId] else {
         debugPrint("window \(windowId) not exists.")
         return
       }
       window.setFullscreen(fullscreen)
-    }
+  }
 
   func setFrame(windowId: Int64, frame: NSRect) {
     guard let window = windows[windowId] else {

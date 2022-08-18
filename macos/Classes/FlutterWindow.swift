@@ -37,6 +37,42 @@ class BaseFlutterWindow: NSObject {
     window.makeKeyAndOrderFront(nil)
   }
 
+  func showTitleBar(show: Bool) -> Type {
+    if (show) {
+      // ignore
+    } else {
+      window.styleMask.insert(.fullSizeContentView)
+      window.titleVisibility = .hidden
+      window.isOpaque = true
+      window.hasShadow = false
+      window.backgroundColor = NSColor.clear
+      if (window.styleMask.contains(.titled)) {
+          let titleBarView: NSView = (window.standardWindowButton(.closeButton)?.superview)!.superview!
+          titleBarView.isHidden = true
+      }
+    }
+  }
+
+  func isMaximized() -> Bool {
+    return window.isZoomed
+  }
+
+  func maximize() {
+    if (!isMaximized()) {
+        window.zoom(nil);
+    }
+  }
+    
+  func unmaximize() {
+    if (isMaximized()) {
+        window.zoom(nil);
+    }
+  }
+
+  func minimize() {
+      window.miniaturize(nil)
+  }
+
   func setFullscreen(fullscreen: Bool) {
     if (fullscreen) {
       if (!window.styleMask.contains(.fullScreen)) {

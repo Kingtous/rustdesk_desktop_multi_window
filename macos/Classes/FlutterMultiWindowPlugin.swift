@@ -82,6 +82,32 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
       let windowId = call.arguments as! Int64
       MultiWindowManager.shared.focus(windowId: windowId)
       result(nil)
+    case "minimize":
+      let windowId = call.arguments as! Int64
+      MultiWindowManager.shared.minimize(windowId: windowId)
+      result(nil)
+    case "maximize":
+      let windowId = call.arguments as! Int64
+      MultiWindowManager.shared.maximize(windowId: windowId)
+      result(nil)
+    case "unmaximize":
+      let windowId = call.arguments as! Int64
+      MultiWindowManager.shared.unmaximize(windowId: windowId)
+      result(nil)
+    case "isMaximized":
+      let windowId = call.arguments as! Int64
+      let res = MultiWindowManager.shared.isMaximized(windowId: windowId)
+      result(res)
+    case "startDragging":
+      let windowId = call.arguments as! Int64
+      let res = MultiWindowManager.shared.startDragging(windowId: windowId)
+      result(res)
+    case "showTitleBar":
+      let arguments = call.arguments as! [String: Any?]
+      let windowId = arguments["windowId"] as! Int64
+      let showTitleBar = arguments["show"] as! Bool
+      let res = MultiWindowManager.shared.showTitleBar(windowId: windowId, show: showTitleBar)
+      result(res)
     case "setTitle":
       let arguments = call.arguments as! [String: Any?]
       let windowId = arguments["windowId"] as! Int64
