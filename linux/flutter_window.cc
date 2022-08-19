@@ -65,6 +65,13 @@ FlutterWindow::FlutterWindow(
     }
   }), this);
 
+  // enhance drag
+  g_signal_connect(window_, "event-after", G_CALLBACK(onWindowEventAfter),
+                   this);
+  this->findEventBox(GTK_WIDGET(fl_view));
+  g_signal_add_emission_hook(
+      g_signal_lookup("button-press-event", GTK_TYPE_WIDGET), 0,
+      onMousePressHook, this, NULL);
 
   gtk_widget_grab_focus(GTK_WIDGET(fl_view));
   gtk_widget_hide(GTK_WIDGET(window_));

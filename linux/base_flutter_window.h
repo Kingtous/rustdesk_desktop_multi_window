@@ -46,10 +46,22 @@ class BaseFlutterWindow {
 
   void ShowTitlebar(bool show);
 
+  void findEventBox(GtkWidget *widget);
+
+  bool isDragging = false;
+  GtkWidget *event_box = nullptr;
+  GdkEventButton currentPressedEvent = GdkEventButton{};
+
 protected:
   virtual GtkWindow* GetWindow() = 0;
 
   bool maximized = false;
 };
+
+gboolean onWindowEventAfter(GtkWidget *text_view, GdkEvent *event,
+                            BaseFlutterWindow *self);
+
+gboolean onMousePressHook(GSignalInvocationHint *ihint, guint n_param_values,
+                          const GValue *param_values, gpointer data);
 
 #endif //DESKTOP_MULTI_WINDOW_LINUX_BASE_FLUTTER_WINDOW_H_

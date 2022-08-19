@@ -88,6 +88,7 @@ void BaseFlutterWindow::StartDragging() {
   guint32 timestamp = (guint32)g_get_monotonic_time();
 
   gtk_window_begin_move_drag(window, 1, root_x, root_y, timestamp);
+  this->isDragging = true;
 }
 
 bool BaseFlutterWindow::IsMaximized() { return this->maximized; }
@@ -124,4 +125,85 @@ void BaseFlutterWindow::ShowTitlebar(bool show) {
     return;
   }
   gtk_window_set_decorated(window, show);
+}
+
+#include <iostream>
+
+void gtk_container_children_callback(GtkWidget *widget, gpointer client_data) {
+  GList **children;
+  children = (GList **)client_data;
+  *children = g_list_prepend(*children, widget);
+}
+
+GList *gtk_container_get_all_children(GtkContainer *container) {
+  GList *children = NULL;
+  gtk_container_forall(container, gtk_container_children_callback, &children);
+  return children;
+}
+
+gboolean onWindowEventAfter(GtkWidget *text_view, GdkEvent *event,
+                            BaseFlutterWindow *self) {
+  if (event->type == GDK_ENTER_NOTIFY) {
+    if (nullptr == self->event_box) {
+      return FALSE;
+    }
+    if (self->isDragging) {
+      self->isDragging = false;
+      // resolve linux drag issue
+      // https://github.com/bitsdojo/bitsdojo_window/blob/e79b2c7d82b95ffc05bd50d19a8f8d322675ad87/bitsdojo_window_linux/linux/window_impl.cpp
+      auto newEvent = (GdkEventButton *)gdk_event_new(GDK_BUTTON_RELEASE);
+      newEvent->x = self->currentPressedEvent.x;
+      newEvent->y = self->currentPressedEvent.y;
+      newEvent->button = self->currentPressedEvent.button;
+      newEvent->type = GDK_BUTTON_RELEASE;
+      newEvent->time = g_get_monotonic_time();
+      gboolean result;
+      g_signal_emit_by_name(self->event_box, "button-release-event", newEvent,
+                            &result);
+      gdk_event_free((GdkEvent *)newEvent);
+    }
+  }
+
+  return FALSE;
+}
+
+void BaseFlutterWindow::findEventBox(GtkWidget *widget) {
+  GList *children;
+  GtkWidget *currentChild;
+  children = gtk_container_get_all_children(GTK_CONTAINER(widget));
+  while (children) {
+    currentChild = (GtkWidget *)children->data;
+    if (GTK_IS_EVENT_BOX(currentChild)) {
+      this->event_box = currentChild;
+    }
+    children = children->next;
+  }
+}
+
+// https://github.com/bitsdojo/bitsdojo_window/blob/e79b2c7d82b95ffc05bd50d19a8f8d322675ad87/bitsdojo_window_linux/linux/window_impl.cpp
+gboolean onMousePressHook(GSignalInvocationHint *ihint, guint n_param_values,
+                          const GValue *param_values, gpointer data) {
+  auto self = reinterpret_cast<BaseFlutterWindow *>(data);
+
+  gpointer instance = g_value_peek_pointer(param_values);
+
+  if (!GTK_IS_EVENT_BOX(instance)) {
+    return TRUE;
+  }
+
+  GdkEventButton *event =
+      (GdkEventButton *)(g_value_get_boxed(param_values + 1));
+
+  // if (self->isOnEdge && !self->isMaximized) {
+  //   self->blockButtonPress();
+  //   self->isResizing = true;
+  //   gtk_window_begin_resize_drag(self->handle, self->currentEdge,
+  //   event->button,
+  //                                static_cast<gint>(event->x_root),
+  //                                static_cast<gint>(event->y_root),
+  //                                event->time);
+  // }
+  memset(&self->currentPressedEvent, 0, sizeof(self->currentPressedEvent));
+  memcpy(&self->currentPressedEvent, event, sizeof(self->currentPressedEvent));
+  return TRUE;
 }
