@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'widgets/sub_drag_to_resize_area.dart';
 import 'window_controller_impl.dart';
 
 /// The [WindowController] instance that is used to control this window.
@@ -62,4 +63,7 @@ abstract class WindowController {
 
   /// available only on macOS.
   Future<void> setFrameAutosaveName(String name);
+
+  /// start resizing
+  Future<void> startResizing(SubWindowResizeEdge resizeEdge);
 }

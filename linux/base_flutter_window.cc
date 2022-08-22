@@ -40,13 +40,16 @@ void BaseFlutterWindow::SetFullscreen(bool fullscreen) {
     gtk_window_unfullscreen(window);
 }
 
-void BaseFlutterWindow::SetBounds(double_t x, double_t y, double_t width, double_t height) {
+void BaseFlutterWindow::SetBounds(double_t x, double_t y, double_t width,
+                                  double_t height) {
   auto window = GetWindow();
   if (!window) {
     return;
   }
-  gtk_window_move(GTK_WINDOW(window), static_cast<gint>(x), static_cast<gint>(y));
-  gtk_window_resize(GTK_WINDOW(window), static_cast<gint>(width), static_cast<gint>(height));
+  gtk_window_move(GTK_WINDOW(window), static_cast<gint>(x),
+                  static_cast<gint>(y));
+  gtk_window_resize(GTK_WINDOW(window), static_cast<gint>(width),
+                    static_cast<gint>(height));
 }
 
 void BaseFlutterWindow::SetTitle(const std::string &title) {
@@ -206,4 +209,42 @@ gboolean onMousePressHook(GSignalInvocationHint *ihint, guint n_param_values,
   memset(&self->currentPressedEvent, 0, sizeof(self->currentPressedEvent));
   memcpy(&self->currentPressedEvent, event, sizeof(self->currentPressedEvent));
   return TRUE;
+}
+
+void BaseFlutterWindow::StartResizing(FlValue *args) {
+  auto window = GetWindow();
+  const gchar *resize_edge =
+      fl_value_get_string(fl_value_lookup_string(args, "resizeEdge"));
+  auto screen = gtk_window_get_screen(window);
+  auto display = gdk_screen_get_display(screen);
+  auto seat = gdk_display_get_default_seat(display);
+  auto device = gdk_seat_get_pointer(seat);
+
+  gint root_x, root_y;
+  gdk_device_get_position(device, nullptr, &root_x, &root_y);
+  guint32 timestamp = (guint32)g_get_monotonic_time();
+
+  GdkWindowEdge gdk_window_edge = GDK_WINDOW_EDGE_NORTH_WEST;
+
+  if (strcmp(resize_edge, "topLeft") == 0) {
+    gdk_window_edge = GDK_WINDOW_EDGE_NORTH_WEST;
+  } else if (strcmp(resize_edge, "top") == 0) {
+    gdk_window_edge = GDK_WINDOW_EDGE_NORTH;
+  } else if (strcmp(resize_edge, "topRight") == 0) {
+    gdk_window_edge = GDK_WINDOW_EDGE_NORTH_EAST;
+  } else if (strcmp(resize_edge, "left") == 0) {
+    gdk_window_edge = GDK_WINDOW_EDGE_WEST;
+  } else if (strcmp(resize_edge, "right") == 0) {
+    gdk_window_edge = GDK_WINDOW_EDGE_EAST;
+  } else if (strcmp(resize_edge, "bottomLeft")) {
+    gdk_window_edge = GDK_WINDOW_EDGE_SOUTH_WEST;
+  } else if (strcmp(resize_edge, "bottom")) {
+    gdk_window_edge = GDK_WINDOW_EDGE_SOUTH;
+  } else if (strcmp(resize_edge, "bottomRight")) {
+    gdk_window_edge = GDK_WINDOW_EDGE_SOUTH_EAST;
+  }
+
+  gtk_window_begin_resize_drag(window, gdk_window_edge,
+                               this->currentPressedEvent.button, root_x, root_y,
+                               timestamp);
 }

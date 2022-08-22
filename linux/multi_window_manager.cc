@@ -206,3 +206,10 @@ void MultiWindowManager::OnWindowDestroy(int64_t id) {
   windows_.erase(id);
 }
 
+void MultiWindowManager::StartResizing(int64_t id, FlValue *value) {
+
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    window->second->StartResizing(value);
+  }
+}

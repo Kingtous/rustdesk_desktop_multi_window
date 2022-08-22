@@ -41,47 +41,50 @@ class _ExampleMainWindowState extends State<_ExampleMainWindow> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: Column(
-          children: [
-            TextButton(
-              onPressed: () async {
-                final window =
-                    await DesktopMultiWindow.createWindow(jsonEncode({
-                  'args1': 'Sub window',
-                  'args2': 100,
-                  'args3': true,
-                  'bussiness': 'bussiness_test',
-                }));
-                window
-                  ..setFrame(const Offset(0, 0) & const Size(1280, 720))
-                  ..center()
-                  ..setTitle('Another window')
-                  ..show();
-              },
-              child: const Text('Create a new World!'),
-            ),
-            TextButton(
-              child: const Text('Send event to all sub windows'),
-              onPressed: () async {
-                final subWindowIds =
-                    await DesktopMultiWindow.getAllSubWindowIds();
-                for (final windowId in subWindowIds) {
-                  DesktopMultiWindow.invokeMethod(
-                    windowId,
-                    'broadcast',
-                    'Broadcast from main window',
-                  );
-                }
-              },
-            ),
-            Expanded(
-              child: EventWidget(controller: WindowController.fromWindowId(0)),
-            )
-          ],
+      home: DragToResizeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: const Text('Plugin example app'),
+          ),
+          body: Column(
+            children: [
+              TextButton(
+                onPressed: () async {
+                  final window =
+                      await DesktopMultiWindow.createWindow(jsonEncode({
+                    'args1': 'Sub window',
+                    'args2': 100,
+                    'args3': true,
+                    'bussiness': 'bussiness_test',
+                  }));
+                  window
+                    ..setFrame(const Offset(0, 0) & const Size(1280, 720))
+                    ..center()
+                    ..setTitle('Another window')
+                    ..show();
+                },
+                child: const Text('Create a new World!'),
+              ),
+              TextButton(
+                child: const Text('Send event to all sub windows'),
+                onPressed: () async {
+                  final subWindowIds =
+                      await DesktopMultiWindow.getAllSubWindowIds();
+                  for (final windowId in subWindowIds) {
+                    DesktopMultiWindow.invokeMethod(
+                      windowId,
+                      'broadcast',
+                      'Broadcast from main window',
+                    );
+                  }
+                },
+              ),
+              Expanded(
+                child:
+                    EventWidget(controller: WindowController.fromWindowId(0)),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -101,78 +104,77 @@ class _ExampleSubWindow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: GestureDetector(
-            onPanDown: (_) {
-              windowController.startDragging();
-            },
-            child: Row(
-              children: [
-                Expanded(child: Text("Example App"))
-              ]
+      home: SubWindowDragToResizeArea(
+        windowId: windowController.windowId,
+        child: Scaffold(
+          appBar: AppBar(
+            title: GestureDetector(
+              onPanDown: (_) {
+                windowController.startDragging();
+              },
+              child: Row(children: [Expanded(child: Text("Example App"))]),
             ),
           ),
-        ),
-        body: Column(
-          children: [
-            if (args != null)
-              Text(
-                'Arguments: ${args.toString()}',
-                style: const TextStyle(fontSize: 20),
+          body: Column(
+            children: [
+              if (args != null)
+                Text(
+                  'Arguments: ${args.toString()}',
+                  style: const TextStyle(fontSize: 20),
+                ),
+              ValueListenableBuilder<bool>(
+                valueListenable: DesktopLifecycle.instance.isActive,
+                builder: (context, active, child) {
+                  if (active) {
+                    return const Text('Window Active');
+                  } else {
+                    return const Text('Window Inactive');
+                  }
+                },
               ),
-            ValueListenableBuilder<bool>(
-              valueListenable: DesktopLifecycle.instance.isActive,
-              builder: (context, active, child) {
-                if (active) {
-                  return const Text('Window Active');
-                } else {
-                  return const Text('Window Inactive');
-                }
-              },
-            ),
-            TextButton(
-              onPressed: () async {
-                windowController.close();
-              },
-              child: const Text('Close this window'),
-            ),
-            TextButton(
-              onPressed: () async {
-                windowController.setFullscreen(true);
-              },
-              child: const Text('enter fullscreen'),
-            ),
-            TextButton(
-              onPressed: () async {
-                windowController.setFullscreen(false);
-              },
-              child: const Text('cancel fullscreen'),
-            ),
-            TextButton(
-              onPressed: () async {
-                windowController.minimize();
-              },
-              child: const Text('minimize'),
-            ),
-            TextButton(
-              onPressed: () async {
-                if (await windowController.isMaximized()) {
-                  windowController.unmaximize();
-                } else {
-                  windowController.maximize();
-                }
-              },
-              child: const Text('maximize/unmaximize'),
-            ),
-            TextButton(
-              onPressed: () async {
-                windowController.close();
-              },
-              child: const Text('close window'),
-            ),
-            Expanded(child: EventWidget(controller: windowController)),
-          ],
+              TextButton(
+                onPressed: () async {
+                  windowController.close();
+                },
+                child: const Text('Close this window'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  windowController.setFullscreen(true);
+                },
+                child: const Text('enter fullscreen'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  windowController.setFullscreen(false);
+                },
+                child: const Text('cancel fullscreen'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  windowController.minimize();
+                },
+                child: const Text('minimize'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  if (await windowController.isMaximized()) {
+                    windowController.unmaximize();
+                  } else {
+                    windowController.maximize();
+                  }
+                },
+                child: const Text('maximize/unmaximize'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  windowController.close();
+                },
+                child: const Text('close window'),
+              ),
+              Expanded(child: EventWidget(controller: windowController)),
+            ],
+          ),
         ),
       ),
     );

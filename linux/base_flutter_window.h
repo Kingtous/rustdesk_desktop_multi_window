@@ -5,15 +5,14 @@
 #ifndef DESKTOP_MULTI_WINDOW_LINUX_BASE_FLUTTER_WINDOW_H_
 #define DESKTOP_MULTI_WINDOW_LINUX_BASE_FLUTTER_WINDOW_H_
 
-#include <string>
 #include <cmath>
 #include <gtk/gtk.h>
+#include <string>
 
 #include "window_channel.h"
 
 class BaseFlutterWindow {
- public:
-
+public:
   virtual ~BaseFlutterWindow() = default;
 
   virtual WindowChannel *GetWindowChannel() = 0;
@@ -48,12 +47,14 @@ class BaseFlutterWindow {
 
   void findEventBox(GtkWidget *widget);
 
+  void StartResizing(FlValue *value);
+
   bool isDragging = false;
   GtkWidget *event_box = nullptr;
   GdkEventButton currentPressedEvent = GdkEventButton{};
 
 protected:
-  virtual GtkWindow* GetWindow() = 0;
+  virtual GtkWindow *GetWindow() = 0;
 
   bool maximized = false;
 };
@@ -64,4 +65,4 @@ gboolean onWindowEventAfter(GtkWidget *text_view, GdkEvent *event,
 gboolean onMousePressHook(GSignalInvocationHint *ihint, guint n_param_values,
                           const GValue *param_values, gpointer data);
 
-#endif //DESKTOP_MULTI_WINDOW_LINUX_BASE_FLUTTER_WINDOW_H_
+#endif // DESKTOP_MULTI_WINDOW_LINUX_BASE_FLUTTER_WINDOW_H_

@@ -1,8 +1,10 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'channels.dart';
+import 'widgets/sub_drag_to_resize_area.dart';
 import 'window_controller.dart';
 
 class WindowControllerMainImpl extends WindowController {
@@ -62,7 +64,7 @@ class WindowControllerMainImpl extends WindowController {
       'name': name,
     });
   }
-  
+
   @override
   Future<void> focus() {
     return _channel.invokeMethod('focus', _id);
@@ -70,12 +72,10 @@ class WindowControllerMainImpl extends WindowController {
 
   @override
   Future<void> setFullscreen(bool fullscreen) {
-    return _channel.invokeMethod('setFullscreen', <String, dynamic>{
-      'windowId': _id,
-      'fullscreen': fullscreen
-    });
+    return _channel.invokeMethod('setFullscreen',
+        <String, dynamic>{'windowId': _id, 'fullscreen': fullscreen});
   }
-  
+
   @override
   Future<void> startDragging() {
     return _channel.invokeMethod('startDragging', _id);
@@ -100,10 +100,33 @@ class WindowControllerMainImpl extends WindowController {
   Future<void> unmaximize() {
     return _channel.invokeMethod('unmaximize', _id);
   }
-  
+
   @override
   Future<void> showTitleBar(bool show) {
     return _channel.invokeMethod(
         'showTitleBar', <String, dynamic>{'windowId': _id, 'show': show});
+  }
+
+  @override
+  Future<void> startResizing(SubWindowResizeEdge subWindowResizeEdge) {
+    return _channel.invokeMethod<bool>(
+      'startResizing',
+      {
+        "windowId": _id,
+        "resizeEdge": describeEnum(subWindowResizeEdge),
+        "top": subWindowResizeEdge == SubWindowResizeEdge.top ||
+            subWindowResizeEdge == SubWindowResizeEdge.topLeft ||
+            subWindowResizeEdge == SubWindowResizeEdge.topRight,
+        "bottom": subWindowResizeEdge == SubWindowResizeEdge.bottom ||
+            subWindowResizeEdge == SubWindowResizeEdge.bottomLeft ||
+            subWindowResizeEdge == SubWindowResizeEdge.bottomRight,
+        "right": subWindowResizeEdge == SubWindowResizeEdge.right ||
+            subWindowResizeEdge == SubWindowResizeEdge.topRight ||
+            subWindowResizeEdge == SubWindowResizeEdge.bottomRight,
+        "left": subWindowResizeEdge == SubWindowResizeEdge.left ||
+            subWindowResizeEdge == SubWindowResizeEdge.topLeft ||
+            subWindowResizeEdge == SubWindowResizeEdge.bottomLeft,
+      },
+    );
   }
 }
