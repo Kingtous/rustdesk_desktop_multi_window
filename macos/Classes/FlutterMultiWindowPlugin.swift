@@ -100,15 +100,15 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
       result(res)
     case "startDragging":
       let windowId = call.arguments as! Int64
-      let res = MultiWindowManager.shared.startDragging(windowId: windowId)
-      result(res)
+      MultiWindowManager.shared.startDragging(windowId: windowId)
+      result(nil)
     case "showTitleBar":
       let arguments = call.arguments as! [String: Any?]
       let windowId = arguments["windowId"] as! Int64
       let showTitleBar = arguments["show"] as! Bool
-      let res = MultiWindowManager.shared.showTitleBar(windowId: windowId, show: showTitleBar)
-      result(res)
-    case "setTitle":
+      MultiWindowManager.shared.showTitleBar(windowId: windowId, show: showTitleBar)
+      result(nil)
+    case "setFullscreen":
       let arguments = call.arguments as! [String: Any?]
       let windowId = arguments["windowId"] as! Int64
       let fullscreen = arguments["fullscreen"] as! Bool

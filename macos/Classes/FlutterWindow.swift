@@ -37,7 +37,7 @@ class BaseFlutterWindow: NSObject {
     window.makeKeyAndOrderFront(nil)
   }
 
-  func showTitleBar(show: Bool) -> Type {
+  func showTitleBar(show: Bool) {
     if (show) {
       // ignore
     } else {
@@ -99,6 +99,15 @@ class BaseFlutterWindow: NSObject {
 
   func setFrameAutosaveName(name: String) {
     window.setFrameAutosaveName(name)
+  }
+
+  func startDragging() {
+    DispatchQueue.main.async {
+      let this: NSWindow  = self.window
+      if(this.currentEvent != nil) {
+          this.performDrag(with: this.currentEvent!)
+      }
+    }
   }
 }
 

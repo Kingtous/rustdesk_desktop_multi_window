@@ -139,7 +139,7 @@ class MultiWindowManager {
         debugPrint("window \(windowId) not exists.")
         return
       }
-      window.setFullscreen(fullscreen)
+      window.setFullscreen(fullscreen: fullscreen)
   }
 
   func setFrame(windowId: Int64, frame: NSRect) {
