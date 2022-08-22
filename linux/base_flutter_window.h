@@ -50,6 +50,7 @@ public:
   void StartResizing(FlValue *value);
 
   bool isDragging = false;
+  bool isResizing = false;
   GtkWidget *event_box = nullptr;
   GdkEventButton currentPressedEvent = GdkEventButton{};
 

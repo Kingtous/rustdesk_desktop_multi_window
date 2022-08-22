@@ -144,6 +144,19 @@ GList *gtk_container_get_all_children(GtkContainer *container) {
   return children;
 }
 
+void emit_button_release(BaseFlutterWindow *self) {
+  auto newEvent = (GdkEventButton *)gdk_event_new(GDK_BUTTON_RELEASE);
+  newEvent->x = self->currentPressedEvent.x;
+  newEvent->y = self->currentPressedEvent.y;
+  newEvent->button = self->currentPressedEvent.button;
+  newEvent->type = GDK_BUTTON_RELEASE;
+  newEvent->time = g_get_monotonic_time();
+  gboolean result;
+  g_signal_emit_by_name(self->event_box, "button-release-event", newEvent,
+                        &result);
+  gdk_event_free((GdkEvent *)newEvent);
+}
+
 gboolean onWindowEventAfter(GtkWidget *text_view, GdkEvent *event,
                             BaseFlutterWindow *self) {
   if (event->type == GDK_ENTER_NOTIFY) {
@@ -154,16 +167,11 @@ gboolean onWindowEventAfter(GtkWidget *text_view, GdkEvent *event,
       self->isDragging = false;
       // resolve linux drag issue
       // https://github.com/bitsdojo/bitsdojo_window/blob/e79b2c7d82b95ffc05bd50d19a8f8d322675ad87/bitsdojo_window_linux/linux/window_impl.cpp
-      auto newEvent = (GdkEventButton *)gdk_event_new(GDK_BUTTON_RELEASE);
-      newEvent->x = self->currentPressedEvent.x;
-      newEvent->y = self->currentPressedEvent.y;
-      newEvent->button = self->currentPressedEvent.button;
-      newEvent->type = GDK_BUTTON_RELEASE;
-      newEvent->time = g_get_monotonic_time();
-      gboolean result;
-      g_signal_emit_by_name(self->event_box, "button-release-event", newEvent,
-                            &result);
-      gdk_event_free((GdkEvent *)newEvent);
+      emit_button_release(self);
+    }
+    if (self->isResizing) {
+      self->isResizing = false;
+      emit_button_release(self);
     }
   }
 
@@ -247,4 +255,5 @@ void BaseFlutterWindow::StartResizing(FlValue *args) {
   gtk_window_begin_resize_drag(window, gdk_window_edge,
                                this->currentPressedEvent.button, root_x, root_y,
                                timestamp);
+  this->isResizing = true;
 }
