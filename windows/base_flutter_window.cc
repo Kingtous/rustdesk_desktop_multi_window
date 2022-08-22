@@ -345,7 +345,7 @@ void BaseFlutterWindow::Hide() {
   ShowWindow(handle, SW_HIDE);
 }
 
-void BaseFlutterWindow::StartResizing(flutter::EncodableMap *param) {
+void BaseFlutterWindow::StartResizing(const flutter::EncodableMap *param) {
   auto handle = GetWindowHandle();
   if (!handle) {
     return;

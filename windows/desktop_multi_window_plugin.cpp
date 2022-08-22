@@ -151,7 +151,7 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
         std::get_if<flutter::EncodableMap>(method_call.arguments());
     auto window_id =
         arguments->at(flutter::EncodableValue("windowId")).LongValue();
-    MultiWindowManager::Instance()->SetResizing(window_id, arguments);
+    MultiWindowManager::Instance()->StartResizing(window_id, arguments);
     result->Success();
     return;
   }
