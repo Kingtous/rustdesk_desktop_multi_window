@@ -109,6 +109,10 @@ class BaseFlutterWindow: NSObject {
       }
     }
   }
+
+  func startResizing(arguments: [String: Any?]) {
+    // ignore
+  }
 }
 
 class FlutterWindow: BaseFlutterWindow {

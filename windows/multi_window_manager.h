@@ -57,7 +57,9 @@ class MultiWindowManager : public std::enable_shared_from_this<MultiWindowManage
 
   void OnWindowDestroy(int64_t id) override;
 
- private:
+  void StartResizing(int64_t id, flutter::EncodableMap *params);
+
+private:
 
   std::map<int64_t, std::unique_ptr<BaseFlutterWindow>> windows_;
 

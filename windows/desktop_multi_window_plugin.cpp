@@ -146,6 +146,14 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
       MultiWindowManager::Instance()->ShowTitlebar(window_id, show);
       result->Success();
       return;
+  } else if (method_call.method_name() == "startResizing") {
+    auto *arguments =
+        std::get_if<flutter::EncodableMap>(method_call.arguments());
+    auto window_id =
+        arguments->at(flutter::EncodableValue("windowId")).LongValue();
+    MultiWindowManager::Instance()->setResizing(window_id, arguments);
+    result->Success();
+    return;
   }
   result->NotImplemented();
 }

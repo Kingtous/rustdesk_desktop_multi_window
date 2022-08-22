@@ -344,3 +344,38 @@ void BaseFlutterWindow::Hide() {
   }
   ShowWindow(handle, SW_HIDE);
 }
+
+void BaseFlutterWindow::StartResizing(flutter::EncodableMap *param) {
+  auto handle = GetWindowHandle();
+  if (!handle) {
+    return;
+  }
+
+  bool top = std::get<bool>(args.at(flutter::EncodableValue("top")));
+  bool bottom = std::get<bool>(args.at(flutter::EncodableValue("bottom")));
+  bool left = std::get<bool>(args.at(flutter::EncodableValue("left")));
+  bool right = std::get<bool>(args.at(flutter::EncodableValue("right")));
+
+  ReleaseCapture();
+  LONG command;
+  if (top && !bottom && !right && !left) {
+    command = HTTOP;
+  } else if (top && left && !bottom && !right) {
+    command = HTTOPLEFT;
+  } else if (left && !top && !bottom && !right) {
+    command = HTLEFT;
+  } else if (right && !top && !left && !bottom) {
+    command = HTRIGHT;
+  } else if (top && right && !left && !bottom) {
+    command = HTTOPRIGHT;
+  } else if (bottom && !top && !right && !left) {
+    command = HTBOTTOM;
+  } else if (bottom && left && !top && !right) {
+    command = HTBOTTOMLEFT;
+  } else
+    command = HTBOTTOMRIGHT;
+  POINT cursorPos;
+  GetCursorPos(&cursorPos);
+  PostMessage(handle, WM_NCLBUTTONDOWN, command,
+              MAKELPARAM(cursorPos.x, cursorPos.y));
+}

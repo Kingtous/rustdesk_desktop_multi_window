@@ -51,6 +51,8 @@ class BaseFlutterWindow {
 
   void ShowTitlebar(bool show);
 
+  void StartResizing(flutter::EncodableMap *param);
+
   std::string title_bar_style_ = "normal";
 
  protected:

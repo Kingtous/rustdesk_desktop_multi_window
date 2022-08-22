@@ -222,3 +222,11 @@ void MultiWindowManager::ShowTitlebar(int64_t id, bool show) {
         window->second->ShowTitlebar(show);
     }
 }
+
+void MultiWindowManager::StartResizing(int64_t id,
+                                       flutter::EncodableMap *params) {
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    window->second->StartResizing(params);
+  }
+}

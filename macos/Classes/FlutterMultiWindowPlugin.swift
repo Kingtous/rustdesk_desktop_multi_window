@@ -114,6 +114,11 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
       let fullscreen = arguments["fullscreen"] as! Bool
       MultiWindowManager.shared.setFullscreen(windowId: windowId, fullscreen: fullscreen)
       result(nil)
+    case "startResizing":
+      let arguments = call.arguments as! [String: Any?]
+      let windowId = arguments["windowId"] as! Int64
+      MultiWindowManager.shared.startResizing(windowId: windowId, arguments: arguments)
+      result(nil)
     default:
       result(FlutterMethodNotImplemented)
     }
