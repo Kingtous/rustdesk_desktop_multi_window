@@ -351,10 +351,10 @@ void BaseFlutterWindow::StartResizing(flutter::EncodableMap *param) {
     return;
   }
 
-  bool top = std::get<bool>(args.at(flutter::EncodableValue("top")));
-  bool bottom = std::get<bool>(args.at(flutter::EncodableValue("bottom")));
-  bool left = std::get<bool>(args.at(flutter::EncodableValue("left")));
-  bool right = std::get<bool>(args.at(flutter::EncodableValue("right")));
+  bool top = std::get<bool>(param->at(flutter::EncodableValue("top")));
+  bool bottom = std::get<bool>(param->at(flutter::EncodableValue("bottom")));
+  bool left = std::get<bool>(param->at(flutter::EncodableValue("left")));
+  bool right = std::get<bool>(param->at(flutter::EncodableValue("right")));
 
   ReleaseCapture();
   LONG command;
