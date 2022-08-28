@@ -130,8 +130,6 @@ void BaseFlutterWindow::ShowTitlebar(bool show) {
   gtk_window_set_decorated(window, show);
 }
 
-#include <iostream>
-
 void gtk_container_children_callback(GtkWidget *widget, gpointer client_data) {
   GList **children;
   children = (GList **)client_data;
@@ -244,11 +242,11 @@ void BaseFlutterWindow::StartResizing(FlValue *args) {
     gdk_window_edge = GDK_WINDOW_EDGE_WEST;
   } else if (strcmp(resize_edge, "right") == 0) {
     gdk_window_edge = GDK_WINDOW_EDGE_EAST;
-  } else if (strcmp(resize_edge, "bottomLeft")) {
+  } else if (strcmp(resize_edge, "bottomLeft") == 0) {
     gdk_window_edge = GDK_WINDOW_EDGE_SOUTH_WEST;
-  } else if (strcmp(resize_edge, "bottom")) {
+  } else if (strcmp(resize_edge, "bottom") == 0) {
     gdk_window_edge = GDK_WINDOW_EDGE_SOUTH;
-  } else if (strcmp(resize_edge, "bottomRight")) {
+  } else if (strcmp(resize_edge, "bottomRight") == 0) {
     gdk_window_edge = GDK_WINDOW_EDGE_SOUTH_EAST;
   }
 
