@@ -10,6 +10,7 @@
 #include <map>
 #include <cmath>
 #include <vector>
+#include <pthread.h>
 
 #include "base_flutter_window.h"
 #include "flutter_window.h"
@@ -65,6 +66,7 @@ class MultiWindowManager : public std::enable_shared_from_this<MultiWindowManage
 
 private:
   std::map<int64_t, std::unique_ptr<BaseFlutterWindow>> windows_;
+  pthread_rwlock_t windows_map_lock_;
 
   void HandleMethodCall(int64_t from_window_id,
                         int64_t target_window_id,
@@ -73,6 +75,7 @@ private:
                         FlMethodCall *method_call
   );
 
+  pthread_rwlock_t* get_map_lock();
 };
 
 #endif //DESKTOP_MULTI_WINDOW_WINDOWS_MULTI_WINDOW_MANAGER_H_

@@ -4,6 +4,9 @@
 
 #include "base_flutter_window.h"
 
+BaseFlutterWindow::BaseFlutterWindow() {
+}
+
 void BaseFlutterWindow::Show() {
   auto window = GetWindow();
   if (!window) {
@@ -187,6 +190,10 @@ void BaseFlutterWindow::findEventBox(GtkWidget *widget) {
     }
     children = children->next;
   }
+}
+
+void BaseFlutterWindow::Destroy() {
+  this->Close();
 }
 
 // https://github.com/bitsdojo/bitsdojo_window/blob/e79b2c7d82b95ffc05bd50d19a8f8d322675ad87/bitsdojo_window_linux/linux/window_impl.cpp

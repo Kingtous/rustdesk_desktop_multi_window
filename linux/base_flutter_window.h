@@ -17,6 +17,8 @@ public:
 
   virtual WindowChannel *GetWindowChannel() = 0;
 
+  BaseFlutterWindow();
+
   void Show();
 
   void Hide();
@@ -49,6 +51,8 @@ public:
 
   void StartResizing(FlValue *value);
 
+  void Destroy();
+
   bool isDragging = false;
   bool isResizing = false;
   GtkWidget *event_box = nullptr;
@@ -58,6 +62,7 @@ protected:
   virtual GtkWindow *GetWindow() = 0;
 
   bool maximized = false;
+private:
 };
 
 gboolean onWindowEventAfter(GtkWidget *text_view, GdkEvent *event,

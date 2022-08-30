@@ -52,7 +52,7 @@ FlutterWindow::FlutterWindow(
 
   window_channel_ = WindowChannel::RegisterWithRegistrar(desktop_multi_window_registrar, id_);
 
-  g_signal_connect(window_, "destroy", G_CALLBACK(+[](GtkWidget *, gpointer arg) {
+  g_signal_connect(window_, "delete-event", G_CALLBACK(+[](GtkWidget *widget,GdkEvent*, gpointer arg) {
     auto *self = static_cast<FlutterWindow *>(arg);
     // destory hook
     if (auto channel = self->GetWindowChannel()) {
@@ -63,6 +63,7 @@ FlutterWindow::FlutterWindow(
       callback->OnWindowClose(self->id_);
       callback->OnWindowDestroy(self->id_);
     }
+    return FALSE;
   }), this);
 
   // enhance drag
