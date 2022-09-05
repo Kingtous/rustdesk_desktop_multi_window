@@ -25,9 +25,17 @@ FlutterWindow::FlutterWindow(
     const std::shared_ptr<FlutterWindowCallback> &callback
 ) : callback_(callback), id_(id) {
   window_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_decorated(GTK_WINDOW(window_), FALSE);
   gtk_window_set_default_size(GTK_WINDOW(window_), 1280, 720);
-  gtk_window_set_title(GTK_WINDOW(window_), "");
   gtk_window_set_position(GTK_WINDOW(window_), GTK_WIN_POS_CENTER);
+  // set gtk header bar
+  // fix for the frame of sub window exists after hide header bar on wayland
+  GtkHeaderBar* header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
+  gtk_widget_show(GTK_WIDGET(header_bar));
+  gtk_header_bar_set_title(header_bar, "");
+  gtk_header_bar_set_show_close_button(header_bar, TRUE);
+  gtk_window_set_titlebar(GTK_WINDOW(window_), GTK_WIDGET(header_bar));
+
   gtk_widget_show(GTK_WIDGET(window_));
 
   g_autoptr(FlDartProject)
@@ -40,7 +48,7 @@ FlutterWindow::FlutterWindow(
   gtk_container_add(GTK_CONTAINER(window_), GTK_WIDGET(fl_view));
 
   if (_g_window_created_callback) {
-    _g_window_created_callback(FL_PLUGIN_REGISTRY(fl_view));
+     _g_window_created_callback(FL_PLUGIN_REGISTRY(fl_view));
   }
   // indicate to plugin injections using extern
   rustdesk_is_subwindow = true;
