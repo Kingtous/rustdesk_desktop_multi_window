@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:desktop_lifecycle/desktop_lifecycle.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/src/services/mouse_cursor.dart';
 import 'package:flutter_multi_window_example/event_widget.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -37,6 +38,18 @@ class _ExampleMainWindow extends StatefulWidget {
   State<_ExampleMainWindow> createState() => _ExampleMainWindowState();
 }
 
+class CustomCursor extends MouseCursor {
+  @override
+  MouseCursorSession createSession(int device) {
+    // TODO: implement createSession
+    throw UnimplementedError();
+  }
+
+  @override
+  // TODO: implement debugDescription
+  String get debugDescription => throw UnimplementedError();
+}
+
 class _ExampleMainWindowState extends State<_ExampleMainWindow> {
   @override
   Widget build(BuildContext context) {
@@ -48,22 +61,25 @@ class _ExampleMainWindowState extends State<_ExampleMainWindow> {
           ),
           body: Column(
             children: [
-              TextButton(
-                onPressed: () async {
-                  final window =
-                      await DesktopMultiWindow.createWindow(jsonEncode({
-                    'args1': 'Sub window',
-                    'args2': 100,
-                    'args3': true,
-                    'bussiness': 'bussiness_test',
-                  }));
-                  window
-                    ..setFrame(const Offset(0, 0) & const Size(1280, 720))
-                    ..center()
-                    ..setTitle('Another window')
-                    ..show();
-                },
-                child: const Text('Create a new World!'),
+              MouseRegion(
+                cursor: SystemMouseCursors.alias,
+                child: TextButton(
+                  onPressed: () async {
+                    final window =
+                        await DesktopMultiWindow.createWindow(jsonEncode({
+                      'args1': 'Sub window',
+                      'args2': 100,
+                      'args3': true,
+                      'bussiness': 'bussiness_test',
+                    }));
+                    window
+                      ..setFrame(const Offset(0, 0) & const Size(1280, 720))
+                      ..center()
+                      ..setTitle('Another window')
+                      ..show();
+                  },
+                  child: const Text('Create a new World!'),
+                ),
               ),
               TextButton(
                 child: const Text('Send event to all sub windows'),
