@@ -8,6 +8,8 @@
 
 #include "tchar.h"
 
+#include "resource.h"
+
 #include <iostream>
 #include <utility>
 
@@ -67,7 +69,7 @@ void RegisterWindowClass(WNDPROC wnd_proc) {
     window_class.cbWndExtra = 0;
     window_class.hInstance = GetModuleHandle(nullptr);
     window_class.hIcon =
-        LoadIcon(window_class.hInstance, IDI_APPLICATION);
+        LoadIcon(window_class.hInstance, MAKEINTRESOURCE(IDI_APP_ICON));
     window_class.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1);
     window_class.lpszMenuName = nullptr;
     window_class.lpfnWndProc = wnd_proc;
