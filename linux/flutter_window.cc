@@ -45,12 +45,7 @@ FlutterWindow::FlutterWindow(
 
   auto fl_view = fl_view_new(project);
   gtk_widget_show(GTK_WIDGET(fl_view));
-
-  auto border_frame = gtk_frame_new(nullptr);
-  gtk_frame_set_shadow_type(GTK_FRAME(border_frame), GTK_SHADOW_ETCHED_IN);
-  gtk_widget_show(GTK_WIDGET(border_frame));
-  gtk_container_add(GTK_CONTAINER(border_frame), GTK_WIDGET(fl_view));
-  gtk_container_add(GTK_CONTAINER(window_), GTK_WIDGET(border_frame));
+  gtk_container_add(GTK_CONTAINER(window_), GTK_WIDGET(fl_view));
 
   if (_g_window_created_callback) {
      _g_window_created_callback(FL_PLUGIN_REGISTRY(fl_view));
