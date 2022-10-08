@@ -39,7 +39,7 @@ class MultiWindowManager : public std::enable_shared_from_this<MultiWindowManage
   void SetFullscreen(int64_t id, bool fullscreen);
 
   void SetFrame(int64_t id, double_t x, double_t y, double_t width, double_t height);
-  g_autoptr(FlValue) GetFrame();
+  FlValue* GetFrame(int64_t id);
 
   void Center(int64_t id);
 

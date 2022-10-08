@@ -55,8 +55,8 @@ void BaseFlutterWindow::SetBounds(double_t x, double_t y, double_t width,
                     static_cast<gint>(height));
 }
 
-g_autoptr(FlValue) BaseFlutterWindow::GetBounds() {
-  g_autoptr(FlValue) result_data = fl_value_new_map();
+FlValue* BaseFlutterWindow::GetBounds() {
+  FlValue* result_data = fl_value_new_map();
   auto window = GetWindow();
   if (window) {
     gint x, y, width, height;

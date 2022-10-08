@@ -32,7 +32,7 @@ public:
   void SetTitle(const std::string &title);
 
   void SetBounds(double_t x, double_t y, double_t width, double_t height);
-  g_autoptr(FlValue) GetBounds();
+  FlValue* GetBounds();
 
   void Center();
 
