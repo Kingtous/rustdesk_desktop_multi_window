@@ -50,6 +50,23 @@ class WindowControllerMainImpl extends WindowController {
   }
 
   @override
+  Future<Rect> getFrame() async {
+    final Map<String, dynamic> arguments = {
+      'windowId': _id,
+    };
+    final Map<dynamic, dynamic> resultData = await _channel.invokeMethod(
+      'getFrame',
+      arguments,
+    );
+    return Rect.fromLTWH(
+      resultData['x'],
+      resultData['y'],
+      resultData['width'],
+      resultData['height'],
+    );
+  }
+
+  @override
   Future<void> setTitle(String title) {
     return _channel.invokeMethod('setTitle', <String, dynamic>{
       'windowId': _id,

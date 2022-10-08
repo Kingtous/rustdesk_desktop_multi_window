@@ -89,6 +89,18 @@ class BaseFlutterWindow: NSObject {
     window.setFrame(frame, display: false, animate: true)
   }
 
+  func GetFrame() -> NSDictionary {
+    let frameRect: NSRect = window.frame;
+    
+    let data: NSDictionary = [
+        "x": frameRect.topLeft.x,
+        "y": frameRect.topLeft.y,
+        "width": frameRect.size.width,
+        "height": frameRect.size.height,
+    ]
+    data
+  }
+
   func setTitle(title: String) {
     window.title = title
   }

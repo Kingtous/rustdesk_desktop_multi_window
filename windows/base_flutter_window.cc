@@ -312,6 +312,27 @@ void BaseFlutterWindow::SetBounds(double_t x, double_t y, double_t width, double
              TRUE);
 }
 
+flutter::EncodableMap BaseFlutterWindow::GetBounds() {
+  flutter::EncodableMap resultMap = flutter::EncodableMap();
+  auto handle = GetWindowHandle();
+  if (handle) {
+    RECT rect;
+    if (GetWindowRect(handle, &rect)) {
+      double x = rect.left;
+      double y = rect.top;
+      double width = (rect.right - rect.left);
+      double height = (rect.bottom - rect.top);
+      resultMap[flutter::EncodableValue("x")] = flutter::EncodableValue(x);
+      resultMap[flutter::EncodableValue("y")] = flutter::EncodableValue(y);
+      resultMap[flutter::EncodableValue("width")] =
+          flutter::EncodableValue(width);
+      resultMap[flutter::EncodableValue("height")] =
+          flutter::EncodableValue(height);
+    }
+  }
+  return resultMap;
+}
+
 void BaseFlutterWindow::SetTitle(const std::string &title) {
   auto handle = GetWindowHandle();
   if (!handle) {

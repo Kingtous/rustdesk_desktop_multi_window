@@ -72,9 +72,27 @@ class _ExampleMainWindowState extends State<_ExampleMainWindow> {
                       'args3': true,
                       'bussiness': 'bussiness_test',
                     }));
+                    // window
+                    //   ..setFrame(const Offset(0, 0) & const Size(1280, 720))
+                    //   ..center()
+                    //   ..setTitle('Another window')
+                    //   ..show();
+                    await window
+                        .setFrame(const Offset(0, 0) & const Size(1280, 720));
+                    {
+                      final rect = await window.getFrame();
+                      debugPrint(
+                        'REMOVE ME =========================== (${rect.left}, ${rect.right}, ${rect.top}, ${rect.bottom})',
+                      );
+                    }
+                    await window.center();
+                    {
+                      final rect = await window.getFrame();
+                      debugPrint(
+                        'REMOVE ME =========================== (${rect.left}, ${rect.right}, ${rect.top}, ${rect.bottom})',
+                      );
+                    }
                     window
-                      ..setFrame(const Offset(0, 0) & const Size(1280, 720))
-                      ..center()
                       ..setTitle('Another window')
                       ..show();
                   },

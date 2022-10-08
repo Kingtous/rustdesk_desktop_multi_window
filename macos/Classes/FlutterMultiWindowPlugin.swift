@@ -63,6 +63,10 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
       let rect = NSRect(x: left, y: top, width: width, height: height)
       MultiWindowManager.shared.setFrame(windowId: windowId, frame: rect)
       result(nil)
+    case "getFrame":
+      let arguments = call.arguments as! [String: Any?]
+      let windowId = arguments["windowId"] as! Int64
+      result(MultiWindowManager.shared.getFrame(windowId: windowId))
     case "setTitle":
       let arguments = call.arguments as! [String: Any?]
       let windowId = arguments["windowId"] as! Int64
