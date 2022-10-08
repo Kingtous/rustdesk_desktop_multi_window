@@ -80,6 +80,12 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
     MultiWindowManager::Instance()->SetFrame(window_id, left, top, width, height);
     result->Success();
     return;
+  } else if (method_call.method_name() == "getFrame") {
+    auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
+    auto window_id = arguments->at(flutter::EncodableValue("windowId")).LongValue();
+    flutter::EncodableMap value = MultiWindowManager::Instance()->GetFrame(window_id);
+    result->Success(flutter::EncodableValue(value));
+    return;
   } else if (method_call.method_name() == "center") {
     auto window_id = method_call.arguments()->LongValue();
     MultiWindowManager::Instance()->Center(window_id);

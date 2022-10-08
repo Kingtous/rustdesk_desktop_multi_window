@@ -55,6 +55,22 @@ void BaseFlutterWindow::SetBounds(double_t x, double_t y, double_t width,
                     static_cast<gint>(height));
 }
 
+FlValue* BaseFlutterWindow::GetBounds() {
+  FlValue* result_data = fl_value_new_map();
+  auto window = GetWindow();
+  if (window) {
+    gint x, y, width, height;
+    gtk_window_get_position(GTK_WINDOW(window), &x, &y);
+    gtk_window_get_size(GTK_WINDOW(window), &width, &height);
+
+    fl_value_set_string_take(result_data, "x", fl_value_new_float(x));
+    fl_value_set_string_take(result_data, "y", fl_value_new_float(y));
+    fl_value_set_string_take(result_data, "width", fl_value_new_float(width));
+    fl_value_set_string_take(result_data, "height", fl_value_new_float(height));
+  }
+  return result_data;
+}
+
 void BaseFlutterWindow::SetTitle(const std::string &title) {
   auto window = GetWindow();
   if (!window) {

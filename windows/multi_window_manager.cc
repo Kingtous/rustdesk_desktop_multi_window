@@ -115,6 +115,15 @@ void MultiWindowManager::SetFrame(int64_t id, double x, double y, double width, 
   }
 }
 
+flutter::EncodableMap MultiWindowManager::GetFrame(int64_t id) {
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    return window->second->GetBounds();
+  } else {
+    return flutter::EncodableMap();
+  }
+}
+
 void MultiWindowManager::SetTitle(int64_t id, const std::string &title) {
   auto window = windows_.find(id);
   if (window != windows_.end()) {

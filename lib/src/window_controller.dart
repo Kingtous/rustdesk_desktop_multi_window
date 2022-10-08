@@ -55,6 +55,11 @@ abstract class WindowController {
   /// Set the window frame rect.
   Future<void> setFrame(Rect frame);
 
+  /// Get the window frame rect.
+  Future<Rect> getFrame() async {
+    return Future.value(Rect.zero);
+  }
+
   /// Center the window on the screen.
   Future<void> center();
 

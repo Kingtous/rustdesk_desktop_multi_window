@@ -158,6 +158,14 @@ class MultiWindowManager {
     window.setFrame(frame: frame)
   }
 
+  func getFrame(windowId: Int64) -> NSDictionary {
+    guard let window = windows[windowId] else {
+      debugPrint("window \(windowId) not exists.")
+      return [];
+    }
+    window.getFrame(windowId: windowId)
+  }
+
   func setTitle(windowId: Int64, title: String) {
     guard let window = windows[windowId] else {
       debugPrint("window \(windowId) not exists.")

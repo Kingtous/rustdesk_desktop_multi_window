@@ -62,6 +62,11 @@ static void desktop_multi_window_plugin_handle_method_call(
     auto height = fl_value_get_float(fl_value_lookup_string(args, "height"));
     MultiWindowManager::Instance()->SetFrame(window_id, left, top, width, height);
     response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  } else if (strcmp(method, "getFrame") == 0) {
+    auto *args = fl_method_call_get_args(method_call);
+    auto window_id = fl_value_get_int(fl_value_lookup_string(args, "windowId"));
+    g_autoptr(FlValue) result = MultiWindowManager::Instance()->GetFrame(window_id);
+    response = FL_METHOD_RESPONSE(fl_method_success_response_new(result));
   } else if (strcmp(method, "setTitle") == 0) {
     auto *args = fl_method_call_get_args(method_call);
     auto window_id = fl_value_get_int(fl_value_lookup_string(args, "windowId"));

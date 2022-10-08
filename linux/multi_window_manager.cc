@@ -164,6 +164,19 @@ void MultiWindowManager::SetFrame(int64_t id, double x, double y, double width, 
   UNLOCK_WINDOW;
 }
 
+FlValue* MultiWindowManager::GetFrame(int64_t id) {
+  FlValue* frame = NULL;
+  RLOCK_WINDOW;
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    frame = window->second->GetBounds();
+  } else {
+    frame = fl_value_new_map();
+  }
+  UNLOCK_WINDOW;
+  return frame;
+}
+
 void MultiWindowManager::SetTitle(int64_t id, const std::string &title) {
   RLOCK_WINDOW;
   auto window = windows_.find(id);
