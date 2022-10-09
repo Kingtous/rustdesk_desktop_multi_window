@@ -7,11 +7,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/services/mouse_cursor.dart';
 import 'package:flutter_multi_window_example/event_widget.dart';
 import 'package:window_manager/window_manager.dart';
+import 'dart:ui' as ui;
+
+int winId = 0;
 
 void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
   if (args.firstOrNull == 'multi_window') {
     final windowId = int.parse(args[1]);
+    winId = windowId;
     final argument = args[2].isEmpty
         ? const {}
         : jsonDecode(args[2]) as Map<String, dynamic>;
@@ -24,9 +28,6 @@ void main(List<String> args) async {
     ));
   } else {
     await windowManager.ensureInitialized();
-    Future.delayed(Duration(seconds: 5), () {
-      windowManager.setTitleBarStyle(TitleBarStyle.hidden);
-    });
     runApp(const _ExampleMainWindow());
   }
 }
@@ -117,81 +118,92 @@ class _ExampleSubWindow extends StatelessWidget {
   final WindowController windowController;
   final Map? args;
 
+  void debug(BuildContext context, Size size) async {
+    final frame = await windowController.getFrame();
+    print("${frame.width}/${frame.height}, ${size.width}/${size.height}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: SubWindowDragToResizeArea(
-        windowId: windowController.windowId,
-        child: Scaffold(
-          appBar: AppBar(
-            title: GestureDetector(
-              onPanDown: (_) {
-                windowController.startDragging();
-              },
-              child: Row(children: [Expanded(child: Text("Example App"))]),
-            ),
-          ),
-          body: Column(
-            children: [
-              if (args != null)
-                Text(
-                  'Arguments: ${args.toString()}',
-                  style: const TextStyle(fontSize: 20),
+      home: Builder(
+        builder: (context) {
+          final size = MediaQuery.of(context).size;
+          debug(context, size);
+          return SubWindowDragToResizeArea(
+            windowId: windowController.windowId,
+            child: Scaffold(
+              appBar: AppBar(
+                title: GestureDetector(
+                  onPanDown: (_) {
+                    windowController.startDragging();
+                  },
+                  child: Row(children: [Expanded(child: Text("Example App"))]),
                 ),
-              ValueListenableBuilder<bool>(
-                valueListenable: DesktopLifecycle.instance.isActive,
-                builder: (context, active, child) {
-                  if (active) {
-                    return const Text('Window Active');
-                  } else {
-                    return const Text('Window Inactive');
-                  }
-                },
               ),
-              TextButton(
-                onPressed: () async {
-                  windowController.close();
-                },
-                child: const Text('Close this window'),
+              body: Column(
+                children: [
+                  if (args != null)
+                    Text(
+                      'Arguments: ${args.toString()}',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: DesktopLifecycle.instance.isActive,
+                    builder: (context, active, child) {
+                      if (active) {
+                        return const Text('Window Active');
+                      } else {
+                        return const Text('Window Inactive');
+                      }
+                    },
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      windowController.close();
+                    },
+                    child: const Text('Close this window'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      windowController.setFullscreen(true);
+                    },
+                    child: const Text('enter fullscreen'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      windowController.setFullscreen(false);
+                    },
+                    child: const Text('cancel fullscreen'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      windowController.minimize();
+                    },
+                    child: const Text('minimize'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      if (await windowController.isMaximized()) {
+                        windowController.unmaximize();
+                      } else {
+                        windowController.maximize();
+                      }
+                    },
+                    child: const Text('maximize/unmaximize'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      windowController.close();
+                    },
+                    child: const Text('close window'),
+                  ),
+                  Expanded(child: EventWidget(controller: windowController)),
+                ],
               ),
-              TextButton(
-                onPressed: () async {
-                  windowController.setFullscreen(true);
-                },
-                child: const Text('enter fullscreen'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  windowController.setFullscreen(false);
-                },
-                child: const Text('cancel fullscreen'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  windowController.minimize();
-                },
-                child: const Text('minimize'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  if (await windowController.isMaximized()) {
-                    windowController.unmaximize();
-                  } else {
-                    windowController.maximize();
-                  }
-                },
-                child: const Text('maximize/unmaximize'),
-              ),
-              TextButton(
-                onPressed: () async {
-                  windowController.close();
-                },
-                child: const Text('close window'),
-              ),
-              Expanded(child: EventWidget(controller: windowController)),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
