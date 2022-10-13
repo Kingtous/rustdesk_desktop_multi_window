@@ -191,7 +191,6 @@ gboolean onWindowEventAfter(GtkWidget *text_view, GdkEvent *event,
       emit_button_release(self);
     }
   }
-
   return FALSE;
 }
 

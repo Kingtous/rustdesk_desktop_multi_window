@@ -32,7 +32,7 @@ dependencies:
   desktop_lifecycle: ^0.1.0
   url_launcher:
   tray_manager:
-  window_manager: ^0.2.7
+  # window_manager: ^0.2.7
 
 dev_dependencies:
   flutter_test:

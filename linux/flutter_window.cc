@@ -73,7 +73,16 @@ FlutterWindow::FlutterWindow(
     }
     return FALSE;
   }), this);
-
+  g_signal_connect(window_, "window-state-event",
+                   G_CALLBACK(onWindowStateChange), this);
+  g_signal_connect(window_, "focus-in-event",
+                   G_CALLBACK(onWindowFocus), this);
+  g_signal_connect(window_, "focus-out-event",
+                   G_CALLBACK(onWindowBlur), this);
+  g_signal_connect(window_, "configure-event",
+                   G_CALLBACK(onWindowMove), this);
+  g_signal_connect(window_, "check-resize",
+                   G_CALLBACK(onWindowResize), this);
   // enhance drag
   g_signal_connect(window_, "event-after", G_CALLBACK(onWindowEventAfter),
                    this);
@@ -90,8 +99,87 @@ WindowChannel *FlutterWindow::GetWindowChannel() {
   return window_channel_.get();
 }
 
+int64_t FlutterWindow::GetId() {
+  return this->id_;
+}
+
 FlutterWindow::~FlutterWindow() = default;
 
 void desktop_multi_window_plugin_set_window_created_callback(WindowCreatedCallback callback) {
   _g_window_created_callback = callback;
+}
+
+void _emitEvent(const char* event_name, FlutterWindow *self) {
+  g_autoptr(FlValue) result_data = fl_value_new_map();
+  fl_value_set_string_take(result_data, "eventName",
+                          fl_value_new_string(event_name));
+  fl_value_set_string_take(result_data, "windowId",
+                          fl_value_new_int(self->GetId()));
+  self->GetWindowChannel()->InvokeMethodSelfVoid("onEvent", result_data);
+}
+
+gboolean onWindowFocus(GtkWidget* widget, GdkEvent* event, gpointer data) {
+  auto* self = static_cast<FlutterWindow*>(data);
+  _emitEvent("focus", self);
+  return false;
+}
+
+gboolean onWindowBlur(GtkWidget* widget, GdkEvent* event, gpointer data) {
+  auto* self = static_cast<FlutterWindow*>(data);
+  _emitEvent("blur", self);
+  return false;
+}
+
+gboolean onWindowResize(GtkWidget* widget, gpointer data) {
+  auto* self = static_cast<FlutterWindow*>(data);
+  _emitEvent("resize", self);
+  return false;
+}
+
+gboolean onWindowMove(GtkWidget* widget, GdkEvent* event, gpointer data) {
+  auto* self = static_cast<FlutterWindow*>(data);
+  _emitEvent("move", self);
+  return false;
+}
+
+gboolean onWindowStateChange(GtkWidget* widget,
+                                GdkEventWindowState* event,
+                                gpointer arg) {
+  auto *self = static_cast<FlutterWindow *>(arg);
+  printf("on state change: %p", self);
+  fflush(stdout);
+  if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) {
+    if (!self->maximized) {
+      self->maximized = true;
+      _emitEvent("maximize", self);
+    }
+  }
+  if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED) {
+    if (!self->minimized) {
+      self->minimized = true;
+      _emitEvent("minimize", self);
+    }
+  }
+  if (event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN) {
+    if (!self->fullscreen) {
+      self->fullscreen = true;
+      _emitEvent("enter-full-screen", self);
+    }
+  }
+  if (self->maximized &&
+      !(event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)) {
+    self->maximized = false;
+    _emitEvent("unmaximize", self);
+  }
+  if (self->minimized &&
+      !(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED)) {
+    self->minimized = false;
+    _emitEvent("restore", self);
+  }
+  if (self->fullscreen &&
+      !(event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)) {
+    self->fullscreen = false;
+    _emitEvent("leave-full-screen", self);
+  }
+  return false;
 }

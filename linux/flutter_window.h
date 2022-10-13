@@ -32,6 +32,8 @@ class FlutterWindow : public BaseFlutterWindow {
 
   WindowChannel *GetWindowChannel() override;
 
+  int64_t GetId();
+
  protected:
 
   GtkWindow *GetWindow() override {
@@ -42,7 +44,7 @@ class FlutterWindow : public BaseFlutterWindow {
 
   std::weak_ptr<FlutterWindowCallback> callback_;
 
-  int64_t id_;
+  int64_t id_ = 0;
 
   GtkWidget *window_ = nullptr;
 
@@ -50,4 +52,15 @@ class FlutterWindow : public BaseFlutterWindow {
 
 };
 
+gboolean onWindowStateChange(GtkWidget* widget,
+                                GdkEventWindowState* event,
+                                gpointer data);
+
+gboolean onWindowFocus(GtkWidget* widget, GdkEvent* event, gpointer data);
+
+gboolean onWindowBlur(GtkWidget* widget, GdkEvent* event, gpointer data);
+
+gboolean onWindowResize(GtkWidget* widget, gpointer data);
+
+gboolean onWindowMove(GtkWidget* widget, GdkEvent* event, gpointer data);
 #endif //DESKTOP_MULTI_WINDOW_WINDOWS_FLUTTER_WINDOW_H_

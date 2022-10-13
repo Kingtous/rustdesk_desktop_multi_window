@@ -1,11 +1,14 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 import 'src/channels.dart';
 import 'src/window_controller.dart';
 import 'src/window_controller_impl.dart';
+import 'src/window_listener.dart';
 
+export 'src/window_listener.dart';
 export 'src/window_controller.dart';
 export 'src/widgets/sub_drag_to_resize_area.dart';
 
@@ -64,11 +67,16 @@ class DesktopMultiWindow {
       return;
     }
     windowEventChannel.setMethodCallHandler((call) async {
-      final fromWindowId = call.arguments['fromWindowId'] as int;
-      final arguments = call.arguments['arguments'];
-      final result =
-          await handler(MethodCall(call.method, arguments), fromWindowId);
-      return result;
+      if (call.method != 'onEvent') {
+        final fromWindowId = call.arguments['fromWindowId'] as int;
+        final arguments = call.arguments['arguments'];
+        final result =
+            await handler(MethodCall(call.method, arguments), fromWindowId);
+        return result;
+      } else {
+        // window event
+        _windowMethodCallHandler(call);
+      }
     });
   }
 
@@ -80,5 +88,55 @@ class DesktopMultiWindow {
     assert(!ids.contains(0), 'ids must not contains main window id');
     assert(ids.every((id) => id > 0), 'id must be greater than 0');
     return ids;
+  }
+
+  static final ObserverList<MultiWindowListener> _listeners = ObserverList<MultiWindowListener>();
+
+  static Future<void> _windowMethodCallHandler(MethodCall call) async {
+
+    for (final MultiWindowListener listener in listeners) {
+      if (!_listeners.contains(listener)) {
+        return;
+      }
+
+      if (call.method != 'onEvent') throw UnimplementedError();
+      // {'fromWindowId': xxx, arguments: {'eventName':xxx, 'windowId': xxx}}
+      String eventName = call.arguments["arguments"]['eventName'].toString();
+      listener.onWindowEvent(eventName);
+      Map<String, Function> funcMap = {
+        kWindowEventClose: listener.onWindowClose,
+        kWindowEventFocus: listener.onWindowFocus,
+        kWindowEventBlur: listener.onWindowBlur,
+        kWindowEventMaximize: listener.onWindowMaximize,
+        kWindowEventUnmaximize: listener.onWindowUnmaximize,
+        kWindowEventMinimize: listener.onWindowMinimize,
+        kWindowEventRestore: listener.onWindowRestore,
+        kWindowEventResize: listener.onWindowResize,
+        kWindowEventResized: listener.onWindowResized,
+        kWindowEventMove: listener.onWindowMove,
+        kWindowEventMoved: listener.onWindowMoved,
+        kWindowEventEnterFullScreen: listener.onWindowEnterFullScreen,
+        kWindowEventLeaveFullScreen: listener.onWindowLeaveFullScreen,
+      };
+      funcMap[eventName]!();
+    }
+  }
+
+  static List<MultiWindowListener> get listeners {
+    final List<MultiWindowListener> localListeners =
+        List<MultiWindowListener>.from(_listeners!);
+    return localListeners;
+  }
+
+  static bool get hasListeners {
+    return _listeners!.isNotEmpty;
+  }
+
+  static void addListener(MultiWindowListener listener) {
+    _listeners!.add(listener);
+  }
+
+  static void removeListener(MultiWindowListener listener) {
+    _listeners!.remove(listener);
   }
 }

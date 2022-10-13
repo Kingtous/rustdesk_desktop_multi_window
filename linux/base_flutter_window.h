@@ -59,10 +59,11 @@ public:
   GtkWidget *event_box = nullptr;
   GdkEventButton currentPressedEvent = GdkEventButton{};
 
+  bool maximized = false;
+  bool minimized = false;
+  bool fullscreen = false;
 protected:
   virtual GtkWindow *GetWindow() = 0;
-
-  bool maximized = false;
 private:
 };
 
