@@ -11,6 +11,9 @@ import Foundation
 class BaseFlutterWindow: NSObject {
   private let window: NSWindow
   let windowChannel: WindowChannel
+  public var onEvent:((String) -> Void)?
+  public var _isPreventClose: Bool = false
+  public var _isMaximized: Bool = false
 
   init(window: NSWindow, channel: WindowChannel) {
     self.window = window
@@ -89,7 +92,7 @@ class BaseFlutterWindow: NSObject {
     window.setFrame(frame, display: false, animate: true)
   }
 
-  func GetFrame() -> NSDictionary {
+  func getFrame() -> NSDictionary {
     let frameRect: NSRect = window.frame;
     
     let data: NSDictionary = [
@@ -98,7 +101,7 @@ class BaseFlutterWindow: NSObject {
         "width": frameRect.size.width,
         "height": frameRect.size.height,
     ]
-    data
+    return data;
   }
 
   func setTitle(title: String) {
@@ -177,7 +180,78 @@ extension FlutterWindow: NSWindowDelegate {
   }
 
   func windowShouldClose(_ sender: NSWindow) -> Bool {
+    _emitEvent("close")
     delegate?.onClose(windowId: windowId)
     return true
   }
+    
+    public func windowDidResize(_ notification: Notification) {
+        _emitEvent("resize")
+        if (!_isMaximized && window.isZoomed) {
+            _isMaximized = true
+            _emitEvent("maximize")
+        }
+        if (_isMaximized && !window.isZoomed) {
+            _isMaximized = false
+            _emitEvent("unmaximize")
+        }
+    }
+    
+    public func windowDidEndLiveResize(_ notification: Notification) {
+        _emitEvent("resized")
+    }
+    
+    public func windowWillMove(_ notification: Notification) {
+        _emitEvent("move")
+    }
+    
+    public func windowDidMove(_ notification: Notification) {
+        _emitEvent("moved")
+    }
+    
+    public func windowDidBecomeMain(_ notification: Notification) {
+        _emitEvent("focus");
+    }
+    
+    public func windowDidResignMain(_ notification: Notification){
+        _emitEvent("blur");
+    }
+    
+    public func windowDidMiniaturize(_ notification: Notification) {
+        _emitEvent("minimize");
+    }
+    
+    public func windowDidDeminiaturize(_ notification: Notification) {
+        _emitEvent("restore");
+    }
+    
+    public func windowDidEnterFullScreen(_ notification: Notification){
+        _emitEvent("enter-full-screen");
+    }
+    
+    public func windowDidExitFullScreen(_ notification: Notification){
+        _emitEvent("leave-full-screen");
+    }
+    
+    public func _emitEvent(_ eventName: String) {
+        let args: NSDictionary = [
+            "eventName": eventName,
+        ]
+        windowChannel.invokeMethod(fromWindowId: 0 , method: "onEvent", arguments: args, result: nil)
+    }
+}
+
+
+extension NSRect {
+    var topLeft: CGPoint {
+        set {
+            let screenFrameRect = NSScreen.main!.frame
+            origin.x = newValue.x
+            origin.y = screenFrameRect.height - newValue.y - size.height
+        }
+        get {
+            let screenFrameRect = NSScreen.main!.frame
+            return CGPoint(x: origin.x, y: screenFrameRect.height - origin.y - size.height)
+        }
+    }
 }
