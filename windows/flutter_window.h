@@ -15,6 +15,11 @@
 #include "base_flutter_window.h"
 #include "window_channel.h"
 
+#define STATE_NORMAL 0
+#define STATE_MAXIMIZED 1
+#define STATE_MINIMIZED 2
+#define STATE_FULLSCREEN_ENTERED 3
+
 class FlutterWindowCallback {
 
  public:
@@ -34,6 +39,8 @@ class FlutterWindow : public BaseFlutterWindow {
   WindowChannel *GetWindowChannel() override {
     return window_channel_.get();
   }
+
+  int last_state = STATE_NORMAL;
 
  protected:
 
@@ -63,6 +70,10 @@ class FlutterWindow : public BaseFlutterWindow {
   LRESULT MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
 
   void Destroy();
+
+  void ForceChildRefresh();
+
+  void EmitEvent(const char* eventName);
 };
 
 #endif //DESKTOP_MULTI_WINDOW_WINDOWS_FLUTTER_WINDOW_H_

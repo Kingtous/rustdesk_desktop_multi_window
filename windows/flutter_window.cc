@@ -239,6 +239,38 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
         MoveWindow(child_content_, rect.left, rect.top, rect.right - rect.left,
                    rect.bottom - rect.top, TRUE);
       }
+      LONG_PTR gwlStyle =
+          GetWindowLongPtr(window_handle_, GWL_STYLE);
+      if ((gwlStyle & (WS_CAPTION | WS_THICKFRAME)) == 0 &&
+          wparam == SIZE_MAXIMIZED) {
+          EmitEvent("enter-full-screen");
+          this->last_state = STATE_FULLSCREEN_ENTERED;
+      }
+      else if (this->last_state == STATE_FULLSCREEN_ENTERED &&
+          wparam == SIZE_RESTORED) {
+          ForceChildRefresh();
+          EmitEvent("leave-full-screen");
+          last_state = STATE_NORMAL;
+      }
+      else if (wparam == SIZE_MAXIMIZED) {
+          EmitEvent("maximize");
+          last_state = STATE_MAXIMIZED;
+      }
+      else if (wparam == SIZE_MINIMIZED) {
+          EmitEvent("minimize");
+          last_state = STATE_MINIMIZED;
+          return 0;
+      }
+      else if (wparam == SIZE_RESTORED) {
+          if (last_state == STATE_MAXIMIZED) {
+              EmitEvent("unmaximize");
+              last_state = STATE_NORMAL;
+          }
+          else if (last_state == STATE_MINIMIZED) {
+              EmitEvent("restore");
+              last_state = STATE_NORMAL;
+          }
+      }
       return 0;
     }
 
@@ -269,13 +301,56 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
         // actually break anything so I've set it to 0. Unless someone pointed a
         // problem in the future.
         std::cout << "hidden adjusted" << std::endl;
-        return 0;
       }
+      return 0;
     }
+    case WM_SIZING: {
+        EmitEvent("resize");
+        return 0;
+    }
+        
+    case WM_MOVING: {
+        EmitEvent("move");
+        return 0;
+    }
+    case WM_NCACTIVATE:
+        char* eventName;
+        if (wparam == TRUE) {
+            eventName = "focus";
+        }
+        else {
+            eventName = "blur";
+        }
+        EmitEvent(eventName);
+        return 0;
+
     default: break;
   }
 
   return DefWindowProc(window_handle_, message, wparam, lparam);
+}
+
+void FlutterWindow::ForceChildRefresh() {
+    HWND hWnd = GetWindow(window_handle_, GW_CHILD);
+    RECT rect;
+
+    GetWindowRect(hWnd, &rect);
+    SetWindowPos(
+        hWnd, nullptr, rect.left, rect.top, rect.right - rect.left + 1,
+        rect.bottom - rect.top,
+        SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_FRAMECHANGED);
+    SetWindowPos(
+        hWnd, nullptr, rect.left, rect.top, rect.right - rect.left,
+        rect.bottom - rect.top,
+        SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_FRAMECHANGED);
+}
+
+void FlutterWindow::EmitEvent(const char* eventName)
+{
+    auto params = flutter::EncodableMap();
+    params.emplace(flutter::EncodableValue("eventName"), flutter::EncodableValue(eventName));
+    auto args = flutter::EncodableValue(std::move(params));
+    window_channel_->InvokeMethod(0, "onEvent", &args);
 }
 
 void FlutterWindow::Destroy() {
