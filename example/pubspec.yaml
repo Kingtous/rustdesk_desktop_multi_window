@@ -33,6 +33,11 @@ dependencies:
   url_launcher:
   tray_manager:
   # window_manager: ^0.2.7
+  window_size:
+    git:
+        url: https://github.com/google/flutter-desktop-embedding.git
+        path: plugins/window_size
+        ref: a738913c8ce2c9f47515382d40827e794a334274
 
 dev_dependencies:
   flutter_test:

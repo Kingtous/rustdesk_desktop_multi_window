@@ -261,7 +261,6 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
       else if (wparam == SIZE_MINIMIZED) {
           EmitEvent("minimize");
           last_state = STATE_MINIMIZED;
-          return 0;
       }
       else if (wparam == SIZE_RESTORED) {
           if (last_state == STATE_MAXIMIZED) {
@@ -273,7 +272,7 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
               last_state = STATE_NORMAL;
           }
       }
-      return 0;
+      break;
     }
 
     case WM_ACTIVATE: {
@@ -308,14 +307,14 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
     }
     case WM_SIZING: {
         EmitEvent("resize");
-        return 0;
+        break;
     }
         
     case WM_MOVING: {
         EmitEvent("move");
-        return 0;
+        break;
     }
-    case WM_NCACTIVATE:
+    case WM_NCACTIVATE: {
         char* eventName;
         if (wparam == TRUE) {
             eventName = "focus";
@@ -324,7 +323,8 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
             eventName = "blur";
         }
         EmitEvent(eventName);
-        return 0;
+        break;
+    }
 
     default: break;
   }
