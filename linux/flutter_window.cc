@@ -103,7 +103,16 @@ int64_t FlutterWindow::GetId() {
   return this->id_;
 }
 
-FlutterWindow::~FlutterWindow() = default;
+FlutterWindow::~FlutterWindow()  {
+  if (this->window_) {
+    g_object_unref(this->window_);
+    this->window_ = nullptr;
+  }
+  if (this->window_channel_ != nullptr) {
+    this->window_channel_.reset();
+    this->window_channel_ = nullptr;
+  }
+};
 
 void desktop_multi_window_plugin_set_window_created_callback(WindowCreatedCallback callback) {
   _g_window_created_callback = callback;

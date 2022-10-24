@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:collection/collection.dart';
-import 'package:desktop_lifecycle/desktop_lifecycle.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/services/mouse_cursor.dart';
@@ -191,16 +190,16 @@ class _SubWindowContentState extends State<SubWindowContent>  with MultiWindowLi
                 'Arguments: ${widget.args.toString()}',
                 style: const TextStyle(fontSize: 20),
               ),
-            ValueListenableBuilder<bool>(
-              valueListenable: DesktopLifecycle.instance.isActive,
-              builder: (context, active, child) {
-                if (active) {
-                  return const Text('Window Active');
-                } else {
-                  return const Text('Window Inactive');
-                }
-              },
-            ),
+            // ValueListenableBuilder<bool>(
+            //   valueListenable: DesktopLifecycle.instance.isActive,
+            //   builder: (context, active, child) {
+            //     if (active) {
+            //       return const Text('Window Active');
+            //     } else {
+            //       return const Text('Window Inactive');
+            //     }
+            //   },
+            // ),
             TextButton(
               onPressed: () async {
                 widget.windowController.close();

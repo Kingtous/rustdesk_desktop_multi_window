@@ -8,7 +8,7 @@
 #include "flutter/generated_plugin_registrant.h"
 
 #include "desktop_multi_window/desktop_multi_window_plugin.h"
-#include "desktop_lifecycle/desktop_lifecycle_plugin.h"
+// #include "desktop_lifecycle/desktop_lifecycle_plugin.h"
 
 struct _MyApplication {
   GtkApplication parent_instance;
@@ -49,7 +49,7 @@ static void my_application_activate(GApplication* application) {
   } else {
     gtk_window_set_title(window, "desktop_multi_window_example");
   }
-  gtk_window_set_decorated(window, FALSE);
+  gtk_window_set_decorated(window, TRUE);
   gtk_window_set_default_size(window, 1280, 720);
   gtk_widget_show(GTK_WIDGET(window));
 
@@ -63,9 +63,9 @@ static void my_application_activate(GApplication* application) {
   fl_register_plugins(FL_PLUGIN_REGISTRY(view));
 
   desktop_multi_window_plugin_set_window_created_callback([](FlPluginRegistry* registry){
-    g_autoptr(FlPluginRegistrar) desktop_lifecycle_registrar =
-        fl_plugin_registry_get_registrar_for_plugin(registry, "DesktopLifecyclePlugin");
-    desktop_lifecycle_plugin_register_with_registrar(desktop_lifecycle_registrar);
+    // g_autoptr(FlPluginRegistrar) desktop_lifecycle_registrar =
+    //     fl_plugin_registry_get_registrar_for_plugin(registry, "DesktopLifecyclePlugin");
+    // desktop_lifecycle_plugin_register_with_registrar(desktop_lifecycle_registrar);
   });
 
   gtk_widget_grab_focus(GTK_WIDGET(view));
