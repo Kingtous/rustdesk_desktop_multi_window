@@ -87,7 +87,7 @@ FlutterWindow::FlutterWindow(
   g_signal_connect(window_, "event-after", G_CALLBACK(onWindowEventAfter),
                    this);
   this->findEventBox(GTK_WIDGET(fl_view));
-  g_signal_add_emission_hook(
+  this->pressedEmissionHook = g_signal_add_emission_hook(
       g_signal_lookup("button-press-event", GTK_TYPE_WIDGET), 0,
       onMousePressHook, this, NULL);
 
@@ -104,6 +104,7 @@ int64_t FlutterWindow::GetId() {
 }
 
 FlutterWindow::~FlutterWindow()  {
+  g_signal_remove_emission_hook(g_signal_lookup("button-press-event", GTK_TYPE_WIDGET), this->pressedEmissionHook);
   if (this->window_) {
     g_object_unref(this->window_);
     this->window_ = nullptr;

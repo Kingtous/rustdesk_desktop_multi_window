@@ -50,6 +50,8 @@ class FlutterWindow : public BaseFlutterWindow {
 
   std::unique_ptr<WindowChannel> window_channel_;
 
+  gulong pressedEmissionHook = 0;
+
 };
 
 gboolean onWindowStateChange(GtkWidget* widget,
