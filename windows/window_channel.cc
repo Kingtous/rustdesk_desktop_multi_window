@@ -34,7 +34,6 @@ WindowChannel::WindowChannel(
 }
 
 WindowChannel::~WindowChannel() {
-  channel_->SetMethodCallHandler(nullptr);
 }
 
 void WindowChannel::InvokeMethod(

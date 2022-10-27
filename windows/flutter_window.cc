@@ -209,6 +209,7 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
         if (window_channel_) {
             auto args = flutter::EncodableValue(flutter::EncodableMap());
             window_channel_->InvokeMethod(0, "onDestroy", &args);
+            window_channel_->SetMethodCallHandler(nullptr);
             window_channel_.reset();
         }
         if (auto callback = callback_.lock()) {
