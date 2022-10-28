@@ -218,7 +218,7 @@ gboolean onMousePressHook(GSignalInvocationHint *ihint, guint n_param_values,
 
   gpointer instance = g_value_peek_pointer(param_values);
 
-  if (!GTK_IS_EVENT_BOX(instance) || !GTK_IS_WIDGET(self)) {
+  if (!GTK_IS_EVENT_BOX(instance)) {
     return TRUE;
   }
 
