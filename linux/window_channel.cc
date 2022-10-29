@@ -75,7 +75,7 @@ void WindowChannel::InvokeMethod(
     FlValue *arguments,
     FlMethodCall *method_call
 ) {
-  auto args = fl_value_new_map();
+  g_autoptr(FlValue) args = fl_value_new_map();
   fl_value_set(args, fl_value_new_string("arguments"), arguments);
   fl_value_set(args, fl_value_new_string("fromWindowId"), fl_value_new_int(from_window_id));
   auto *user_data = new MethodInvokeAsyncUserData(fl_method_channel_, method_call);
@@ -98,7 +98,7 @@ void WindowChannel::InvokeMethod(
 
 
 void WindowChannel::InvokeMethodSelfVoid(const gchar* method, FlValue *arguments) {
-  auto args = fl_value_new_map();
+  g_autoptr(FlValue) args = fl_value_new_map();
   fl_value_set(args, fl_value_new_string("arguments"), arguments);
   fl_value_set(args, fl_value_new_string("fromWindowId"), fl_value_new_int(0));
   fl_method_channel_invoke_method(
