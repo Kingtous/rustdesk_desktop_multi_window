@@ -43,6 +43,10 @@ class MultiWindowManager : public std::enable_shared_from_this<MultiWindowManage
 
   void SetFullscreen(int64_t id, bool fullscreen);
 
+  bool IsPreventClose(int64_t id);
+
+  void SetPreventClose(int64_t id, bool setPreventClose);
+
   void Close(int64_t id);
 
   void SetFrame(int64_t id, double_t x, double_t y, double_t width, double_t height);

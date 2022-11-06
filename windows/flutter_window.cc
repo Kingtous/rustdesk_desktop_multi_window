@@ -202,7 +202,8 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
       flutter_controller_->engine()->ReloadSystemFonts();
       break;
     }
-    case WM_DESTROY: {
+    case WM_DESTROY:
+      // prevent crash
       if (!destroyed_) {
         destroyed_ = true;
         // Give onDestroy callback to Flutter to close window gracefully
@@ -217,8 +218,11 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
         }
       }
       return 0;
-    }
     case WM_CLOSE: {
+      EmitEvent("close");
+      if (this->IsPreventClose()) {
+        return -1;
+      }
       if (auto callback = callback_.lock()) {
         callback->OnWindowClose(id_);
       }

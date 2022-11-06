@@ -54,6 +54,10 @@ class BaseFlutterWindow {
 
   void StartResizing(const flutter::EncodableMap *param);
 
+  bool IsPreventClose();
+
+  void SetPreventClose(bool setPreventClose);
+
   std::string title_bar_style_ = "normal";
 
  protected:
@@ -69,6 +73,7 @@ private:
 	LONG g_style_before_fullscreen;
 	LONG g_ex_style_before_fullscreen;
 	bool is_frameless_ = false;
+  bool is_prevent_close_ = false;
 
 };
 

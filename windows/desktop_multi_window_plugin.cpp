@@ -160,6 +160,20 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
     MultiWindowManager::Instance()->StartResizing(window_id, arguments);
     result->Success();
     return;
+  } else if (method_call.method_name() == "setPreventClose") {
+    auto *arguments =
+        std::get_if<flutter::EncodableMap>(method_call.arguments());
+    auto window_id =
+        arguments->at(flutter::EncodableValue("windowId")).LongValue();
+    auto setPreventClose = std::get<bool>(arguments->at(flutter::EncodableValue("setPreventClose")));
+    MultiWindowManager::Instance()->SetPreventClose(window_id, setPreventClose);
+    result->Success();
+    return;
+  } else if (method_call.method_name() == "isPreventClose") {
+    auto window_id = method_call.arguments()->LongValue();
+    auto res = MultiWindowManager::Instance()->IsPreventClose(window_id);
+    result->Success(flutter::EncodableValue(res));
+    return;
   }
   result->NotImplemented();
 }

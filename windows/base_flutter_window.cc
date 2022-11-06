@@ -400,3 +400,12 @@ void BaseFlutterWindow::StartResizing(const flutter::EncodableMap *param) {
   PostMessage(handle, WM_NCLBUTTONDOWN, command,
               MAKELPARAM(cursorPos.x, cursorPos.y));
 }
+
+
+bool BaseFlutterWindow::IsPreventClose() {
+  return this->is_prevent_close_;
+}
+
+void BaseFlutterWindow::SetPreventClose(bool setPreventClose) {
+  this->is_prevent_close_ = setPreventClose;
+}

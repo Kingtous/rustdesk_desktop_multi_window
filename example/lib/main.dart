@@ -215,6 +215,8 @@ class _SubWindowContentState extends State<SubWindowContent>
               onPressed: () async {
                 isPreventClose = !isPreventClose;
                 widget.windowController.setPreventClose(isPreventClose);
+
+                isPreventClose = await widget.windowController.isPreventClose();
                 setState(() {});
               },
               child: Text(!isPreventClose
