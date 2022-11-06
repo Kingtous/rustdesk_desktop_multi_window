@@ -54,6 +54,10 @@ public:
 
   void Destroy();
 
+  bool IsPreventClose();
+
+  void SetPreventClose(bool setPreventClose);
+
   bool isDragging = false;
   bool isResizing = false;
   GtkWidget *event_box = nullptr;
@@ -62,6 +66,8 @@ public:
   bool maximized = false;
   bool minimized = false;
   bool fullscreen = false;
+
+  bool isPreventClose = false;
 protected:
   virtual GtkWindow *GetWindow() = 0;
 private:

@@ -53,52 +53,51 @@ class _ExampleMainWindowState extends State<_ExampleMainWindow> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Plugin example app'),
-          ),
-          body: Column(
-            children: [
-              MouseRegion(
-                cursor: SystemMouseCursors.alias,
-                child: TextButton(
-                  onPressed: () async {
-                    final window =
-                        await DesktopMultiWindow.createWindow(jsonEncode({
-                      'args1': 'Sub window',
-                      'args2': 100,
-                      'args3': true,
-                      'bussiness': 'bussiness_test',
-                    }));
-                    window
-                      ..setFrame(const Offset(0, 0) & const Size(1280, 720))
-                      ..center()
-                      ..setTitle('Another window')
-                      ..show();
-                  },
-                  child: const Text('Create a new World!'),
-                ),
-              ),
-              TextButton(
-                child: const Text('Send event to all sub windows'),
-                onPressed: () async {
-                  final subWindowIds =
-                      await DesktopMultiWindow.getAllSubWindowIds();
-                  for (final windowId in subWindowIds) {
-                    DesktopMultiWindow.invokeMethod(
-                      windowId,
-                      'broadcast',
-                      'Broadcast from main window',
-                    );
-                  }
-                },
-              ),
-              Expanded(
-                child:
-                    EventWidget(controller: WindowController.fromWindowId(0)),
-              )
-            ],
-          ),
+        appBar: AppBar(
+          title: const Text('Plugin example app'),
         ),
+        body: Column(
+          children: [
+            MouseRegion(
+              cursor: SystemMouseCursors.alias,
+              child: TextButton(
+                onPressed: () async {
+                  final window =
+                      await DesktopMultiWindow.createWindow(jsonEncode({
+                    'args1': 'Sub window',
+                    'args2': 100,
+                    'args3': true,
+                    'bussiness': 'bussiness_test',
+                  }));
+                  window
+                    ..setFrame(const Offset(0, 0) & const Size(1280, 720))
+                    ..center()
+                    ..setTitle('Another window')
+                    ..show();
+                },
+                child: const Text('Create a new World!'),
+              ),
+            ),
+            TextButton(
+              child: const Text('Send event to all sub windows'),
+              onPressed: () async {
+                final subWindowIds =
+                    await DesktopMultiWindow.getAllSubWindowIds();
+                for (final windowId in subWindowIds) {
+                  DesktopMultiWindow.invokeMethod(
+                    windowId,
+                    'broadcast',
+                    'Broadcast from main window',
+                  );
+                }
+              },
+            ),
+            Expanded(
+              child: EventWidget(controller: WindowController.fromWindowId(0)),
+            )
+          ],
+        ),
+      ),
     );
   }
 }
@@ -125,7 +124,10 @@ class _ExampleSubWindow extends StatelessWidget {
         builder: (context) {
           final size = MediaQuery.of(context).size;
           debug(context, size);
-          return SubWindowContent(windowController: windowController, args: args,);
+          return SubWindowContent(
+            windowController: windowController,
+            args: args,
+          );
         },
       ),
     );
@@ -135,13 +137,16 @@ class _ExampleSubWindow extends StatelessWidget {
 class SubWindowContent extends StatefulWidget {
   final WindowController windowController;
   final Map? args;
-  const SubWindowContent({Key? key, required this.windowController, this.args}) : super(key: key);
+  const SubWindowContent({Key? key, required this.windowController, this.args})
+      : super(key: key);
 
   @override
   State<SubWindowContent> createState() => _SubWindowContentState();
 }
 
-class _SubWindowContentState extends State<SubWindowContent>  with MultiWindowListener{
+class _SubWindowContentState extends State<SubWindowContent>
+    with MultiWindowListener {
+  bool isPreventClose = false;
 
   @override
   void initState() {
@@ -205,6 +210,16 @@ class _SubWindowContentState extends State<SubWindowContent>  with MultiWindowLi
                 widget.windowController.close();
               },
               child: const Text('Close this window'),
+            ),
+            TextButton(
+              onPressed: () async {
+                isPreventClose = !isPreventClose;
+                widget.windowController.setPreventClose(isPreventClose);
+                setState(() {});
+              },
+              child: Text(!isPreventClose
+                  ? 'Set Prevent Close'
+                  : 'Unset Prevent Close'),
             ),
             TextButton(
               onPressed: () async {

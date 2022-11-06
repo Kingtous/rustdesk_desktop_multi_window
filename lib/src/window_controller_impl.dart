@@ -146,4 +146,18 @@ class WindowControllerMainImpl extends WindowController {
       },
     );
   }
+
+  @override
+  Future<bool> isPreventClose() async {
+    return await _channel.invokeMethod<bool>('isPreventClose', _id) ?? false;
+  }
+
+  @override
+  Future<void> setPreventClose(bool setPreventClose) async {
+    final Map<String, dynamic> arguments = {
+      'setPreventClose': setPreventClose,
+      'windowId': _id
+    };
+    await _channel.invokeMethod('setPreventClose', arguments);
+  }
 }

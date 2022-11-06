@@ -277,3 +277,12 @@ void BaseFlutterWindow::StartResizing(FlValue *args) {
                                timestamp);
   this->isResizing = true;
 }
+
+
+bool BaseFlutterWindow::IsPreventClose() {
+  return this->isPreventClose;
+}
+
+void BaseFlutterWindow::SetPreventClose(bool setPreventClose) {
+  this->isPreventClose = setPreventClose;
+}

@@ -281,6 +281,26 @@ void MultiWindowManager::StartResizing(int64_t id, FlValue *value) {
   UNLOCK_WINDOW;
 }
 
+bool MultiWindowManager::IsPreventClose(int64_t id) {
+  RLOCK_WINDOW;
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    bool ret = window->second->IsPreventClose();
+    UNLOCK_WINDOW;
+    return ret;
+  }
+  UNLOCK_WINDOW;
+  return false;
+}
+
+void MultiWindowManager::SetPreventClose(int64_t id, bool setPreventClose) {
+  RLOCK_WINDOW;
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    window->second->SetPreventClose(setPreventClose);
+  }
+  UNLOCK_WINDOW;
+}
 
 pthread_rwlock_t* MultiWindowManager::get_map_lock() {
   return &this->windows_map_lock_;

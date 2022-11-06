@@ -71,4 +71,11 @@ abstract class WindowController {
 
   /// start resizing
   Future<void> startResizing(SubWindowResizeEdge resizeEdge);
+
+  /// Check if is intercepting the native close signal.
+  Future<bool> isPreventClose();
+
+  /// Set if intercept the native close signal. May useful when combine with the onclose event listener.
+  /// This will also prevent the manually triggered close event.
+  Future<void> setPreventClose(bool isPreventClose);
 }

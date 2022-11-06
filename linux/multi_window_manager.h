@@ -65,6 +65,10 @@ class MultiWindowManager : public std::enable_shared_from_this<MultiWindowManage
 
   void StartResizing(int64_t id, FlValue *value);
 
+  bool IsPreventClose(int64_t id);
+
+  void SetPreventClose(int64_t id, bool setPreventClose);
+
 private:
   std::map<int64_t, std::unique_ptr<BaseFlutterWindow>> windows_;
   pthread_rwlock_t windows_map_lock_;
