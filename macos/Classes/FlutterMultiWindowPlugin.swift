@@ -123,6 +123,16 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
       let windowId = arguments["windowId"] as! Int64
       MultiWindowManager.shared.startResizing(windowId: windowId, arguments: arguments)
       result(nil)
+    case "isPreventClose":
+      let windowId = call.arguments as! Int64
+      let res = MultiWindowManager.shared.isPreventClose(windowId: windowId)
+      result(res)
+    case "setPreventClose":
+      let arguments = call.arguments as! [String: Any?]
+      let windowId = arguments["windowId"] as! Int64
+      let setPreventClose = arguments["setPreventClose"] as! Bool
+      MultiWindowManager.shared.setPreventClose(windowId: windowId, setPreventClose: setPreventClose)
+      result(nil)
     default:
       result(FlutterMethodNotImplemented)
     }

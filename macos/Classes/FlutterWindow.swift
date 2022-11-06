@@ -109,7 +109,7 @@ class BaseFlutterWindow: NSObject {
   }
 
   func close() {
-    window.close()
+    window.performClose(nil)
   }
 
   func setFrameAutosaveName(name: String) {
@@ -128,6 +128,14 @@ class BaseFlutterWindow: NSObject {
   func startResizing(arguments: [String: Any?]) {
     // ignore
   }
+    
+    func isPreventClose() -> Bool{
+        return _isPreventClose
+    }
+    
+    func setPreventClose(setPreventClose: Bool) {
+        _isPreventClose = setPreventClose
+    }
 }
 
 class FlutterWindow: BaseFlutterWindow {
@@ -175,13 +183,15 @@ class FlutterWindow: BaseFlutterWindow {
 }
 
 extension FlutterWindow: NSWindowDelegate {
-  func windowWillClose(_ notification: Notification) {
+  public func windowWillClose(_ notification: Notification) {
     delegate?.onClose(windowId: windowId)
   }
-
-  func windowShouldClose(_ sender: NSWindow) -> Bool {
+    
+  public func windowShouldClose(_ sender: NSWindow) -> Bool {
     _emitEvent("close")
-    delegate?.onClose(windowId: windowId)
+    if (isPreventClose()) {
+        return false
+    }
     return true
   }
     

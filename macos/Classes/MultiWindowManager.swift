@@ -185,6 +185,22 @@ class MultiWindowManager {
   func getAllSubWindowIds() -> [Int64] {
     return windows.keys.filter { $0 != 0 }
   }
+    
+    func isPreventClose(windowId: Int64) -> Bool {
+        guard let window = windows[windowId] else {
+          debugPrint("window \(windowId) not exists.")
+            return false
+        }
+        return window.isPreventClose()
+    }
+    
+    func setPreventClose(windowId: Int64, setPreventClose: Bool) {
+        guard let window = windows[windowId] else {
+          debugPrint("window \(windowId) not exists.")
+            return
+        }
+        return window.setPreventClose(setPreventClose: setPreventClose)
+    }
 }
 
 protocol WindowManagerDelegate: AnyObject {
