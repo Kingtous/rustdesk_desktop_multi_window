@@ -20,7 +20,15 @@ void BaseFlutterWindow::Hide() {
   if (!window) {
     return;
   }
+  // store bounds
+  gint x, y, width, height;
+  gtk_window_get_position(GTK_WINDOW(window), &x, &y);
+  gtk_window_get_size(GTK_WINDOW(window), &width, &height);
+  // size and position lost after hide
   gtk_widget_hide(GTK_WIDGET(window));
+  // restore bounds
+  gtk_window_move(GTK_WINDOW(window), x, y);
+  gtk_window_resize(GTK_WINDOW(window), width, height);
 }
 
 void BaseFlutterWindow::Focus() {
