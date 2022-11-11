@@ -235,18 +235,27 @@ void BaseFlutterWindow::ShowTitlebar(bool show) {
         return;
     }
     this->title_bar_style_ = show ? "normal" : "hidden";
-    if (!show) {
-        LONG lStyle = GetWindowLong(window, GWL_STYLE);
-        SetWindowLong(window, GWL_STYLE, lStyle & ~WS_CAPTION);
-        SetWindowPos(window, NULL, 0, 0, 0, 0, SWP_NOSIZE
-            | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-    }
-    else {
-        LONG lStyle = GetWindowLong(window, GWL_STYLE);
-        SetWindowLong(window, GWL_STYLE, lStyle | WS_CAPTION);
-        SetWindowPos(window, NULL, 0, 0, 0, 0, SWP_NOSIZE
-            | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-    }
+    this->is_frameless_ = false;
+    
+    // if (!show) {
+    //     LONG lStyle = GetWindowLong(window, GWL_STYLE);
+    //     SetWindowLong(window, GWL_STYLE, lStyle & ~WS_CAPTION);
+    //     SetWindowPos(window, NULL, 0, 0, 0, 0, SWP_NOSIZE
+    //         | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+    // }
+    // else {
+    //     LONG lStyle = GetWindowLong(window, GWL_STYLE);
+    //     SetWindowLong(window, GWL_STYLE, lStyle | WS_CAPTION);
+    //     SetWindowPos(window, NULL, 0, 0, 0, 0, SWP_NOSIZE
+    //         | SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+    // }
+    MARGINS margins = {0, 0, 0, 0};
+    RECT rect;
+    GetWindowRect(window, &rect);
+    DwmExtendFrameIntoClientArea(window, &margins);
+    SetWindowPos(window, nullptr, rect.left, rect.top, 0, 0,
+                SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE |
+                    SWP_FRAMECHANGED);
 }
 
 void BaseFlutterWindow::Maximize(const flutter::EncodableMap& args) {
