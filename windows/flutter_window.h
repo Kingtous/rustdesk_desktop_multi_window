@@ -33,7 +33,7 @@ class FlutterWindow : public BaseFlutterWindow {
 
  public:
 
-  FlutterWindow(int64_t id, std::string args, const std::shared_ptr<FlutterWindowCallback> &callback);
+  FlutterWindow(HWND parent,int64_t id, std::string args, const std::shared_ptr<FlutterWindowCallback> &callback);
   ~FlutterWindow() override;
 
   WindowChannel *GetWindowChannel() override {
@@ -41,8 +41,6 @@ class FlutterWindow : public BaseFlutterWindow {
   }
 
   int last_state = STATE_NORMAL;
-
- protected:
 
   HWND GetWindowHandle() override { return window_handle_; }
 

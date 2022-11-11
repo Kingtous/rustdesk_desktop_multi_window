@@ -60,8 +60,6 @@ class BaseFlutterWindow {
 
   std::string title_bar_style_ = "normal";
 
- protected:
-
   virtual HWND GetWindowHandle() = 0;
 
 private:

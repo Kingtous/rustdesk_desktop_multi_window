@@ -115,6 +115,7 @@ void EnableFullDpiSupportIfAvailable(HWND hwnd) {
 }
 
 FlutterWindow::FlutterWindow(
+    HWND parent,
     int64_t id,
     std::string args,
     const std::shared_ptr<FlutterWindowCallback> &callback
@@ -131,7 +132,7 @@ FlutterWindow::FlutterWindow(
       kFlutterWindowClassName, L"", WS_OVERLAPPEDWINDOW,
       Scale(target_point.x, scale_factor_), Scale(target_point.y, scale_factor_),
       Scale(1280, scale_factor_), Scale(720, scale_factor_),
-      nullptr, nullptr, GetModuleHandle(nullptr), this);
+      parent, nullptr, GetModuleHandle(nullptr), this);
 
   RECT frame;
   GetClientRect(window_handle, &frame);

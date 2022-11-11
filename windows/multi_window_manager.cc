@@ -55,8 +55,8 @@ MultiWindowManager::MultiWindowManager() : windows_() {
 int64_t MultiWindowManager::Create(std::string args) {
   g_next_id_++;
   int64_t id = g_next_id_;
-
-  auto window = std::make_unique<FlutterWindow>(id, std::move(args), shared_from_this());
+  auto parent_hwnd = windows_[0].get()->GetWindowHandle();
+  auto window = std::make_unique<FlutterWindow>(parent_hwnd ,id, std::move(args), shared_from_this());
   auto channel = window->GetWindowChannel();
   channel->SetMethodCallHandler([this](int64_t from_window_id,
                                        int64_t target_window_id,
