@@ -69,7 +69,9 @@ void BaseFlutterWindow::Focus() {
   if (!handle) {
     return;
   }
-  Restore();
+  if (IsMinimized()) {
+     Restore();
+  }
   SetWindowPos(handle, HWND_TOP, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
   SetForegroundWindow(handle);
 }
@@ -213,6 +215,18 @@ void BaseFlutterWindow::Minimize() {
     if (windowPlacement.showCmd != SW_SHOWMINIMIZED) {
         PostMessage(window, WM_SYSCOMMAND, SC_MINIMIZE, 0);
     }
+}
+
+bool BaseFlutterWindow::IsMinimized()
+{
+    auto window = GetWindowHandle();
+    if (!window) {
+        return false;
+    }
+    WINDOWPLACEMENT windowPlacement;
+    GetWindowPlacement(window, &windowPlacement);
+
+    return windowPlacement.showCmd == SW_SHOWMINIMIZED;
 }
 
 void BaseFlutterWindow::ShowTitlebar(bool show) {
@@ -408,4 +422,14 @@ bool BaseFlutterWindow::IsPreventClose() {
 
 void BaseFlutterWindow::SetPreventClose(bool setPreventClose) {
   this->is_prevent_close_ = setPreventClose;
+}
+
+bool BaseFlutterWindow::IsFullScreen()
+{
+    return g_is_window_fullscreen;
+}
+
+bool BaseFlutterWindow::IsFrameless()
+{
+    return is_frameless_;
 }

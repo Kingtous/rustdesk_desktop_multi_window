@@ -57,7 +57,7 @@ namespace {
 
 WindowCreatedCallback _g_window_created_callback = nullptr;
 
-TCHAR kFlutterWindowClassName[] = _T("FlutterMultiWindow");
+TCHAR kFlutterWindowClassName[] = _T("RustdeskMultiWindow");
 
 int32_t class_registered_ = 0;
 
@@ -184,7 +184,6 @@ LRESULT CALLBACK FlutterWindow::WndProc(HWND window, UINT message, WPARAM wparam
 
   return DefWindowProc(window, message, wparam, lparam);
 }
-#include <iostream>
 
 LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam) {
 
@@ -239,6 +238,51 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
 
       return 0;
     }
+    case WM_NCCALCSIZE: {
+        // This must always be first or else the one of other two ifs will execute
+      //  when window is in full screen and we don't want that
+        if (wparam && IsFullScreen()) {
+            NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
+            sz->rgrc[0].bottom -= 3;
+            return 0;
+        }
+        // This must always be before handling title_bar_style_ == "hidden" so
+        //  the if TitleBarStyle.hidden doesn't get executed.
+        if (wparam && IsFrameless()) {
+            NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
+            // Add borders when maximized so app doesn't get cut off.
+            if (IsMaximized()) {
+                sz->rgrc[0].left += 8;
+                sz->rgrc[0].top += 8;
+                sz->rgrc[0].right -= 8;
+                sz->rgrc[0].bottom -= 9;
+            }
+            // This cuts the app at the bottom by one pixel but that's necessary to
+            // prevent jitter when resizing the app
+            sz->rgrc[0].bottom += 1;
+            return 0;
+        }
+        if (wparam && this->title_bar_style_ == "hidden") {
+            NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
+            // Add 8 pixel to the top border when maximized so the app isn't cut off
+            if (this->IsMaximized()) {
+                sz->rgrc[0].top += 8;
+            }
+            else {
+                // on windows 10, if set to 0, there's a white line at the top
+                // of the app and I've yet to find a way to remove that.
+                sz->rgrc[0].top += IsWindows11OrGreater() ? 0 : 1;
+            }
+            sz->rgrc[0].right -= 8;
+            sz->rgrc[0].bottom -= 8;
+            sz->rgrc[0].left -= -8;
+            // Previously (WVR_HREDRAW | WVR_VREDRAW), but returning 0 or 1 doesn't
+            // actually break anything so I've set it to 0. Unless someone pointed a
+            // problem in the future.
+            return 0;
+        }
+        break;
+    }
     case WM_SIZE: {
       RECT rect;
       GetClientRect(window_handle_, &rect);
@@ -287,35 +331,11 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
       }
       return 0;
     }
-
-    case WM_NCCALCSIZE: {
-      if (wparam && this->title_bar_style_ == "hidden") {
-        NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
-
-        // Add 8 pixel to the top border when maximized so the app isn't cut off
-        if (this->IsMaximized()) {
-          sz->rgrc[0].top += 8;
-        } else {
-          // on windows 10, if set to 0, there's a white line at the top
-          // of the app and I've yet to find a way to remove that.
-          sz->rgrc[0].top += IsWindows11OrGreater() ? 0 : 1;
-        }
-        sz->rgrc[0].right -= 8;
-        sz->rgrc[0].bottom -= 8;
-        sz->rgrc[0].left -= -8;
-
-        // Previously (WVR_HREDRAW | WVR_VREDRAW), but returning 0 or 1 doesn't
-        // actually break anything so I've set it to 0. Unless someone pointed a
-        // problem in the future.
-        std::cout << "hidden adjusted" << std::endl;
-      }
-      return 0;
-    }
     case WM_SIZING: {
         EmitEvent("resize");
         break;
     }
-        
+
     case WM_MOVING: {
         EmitEvent("move");
         break;

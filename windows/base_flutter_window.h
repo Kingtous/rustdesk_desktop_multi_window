@@ -44,6 +44,8 @@ class BaseFlutterWindow {
 
   void Minimize();
 
+  bool IsMinimized();
+
   bool IsMaximized();
 
   void Maximize();
@@ -57,6 +59,10 @@ class BaseFlutterWindow {
   bool IsPreventClose();
 
   void SetPreventClose(bool setPreventClose);
+
+  bool IsFullScreen();
+
+  bool IsFrameless();
 
   std::string title_bar_style_ = "normal";
 

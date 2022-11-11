@@ -52,6 +52,8 @@ class FlutterWindow : public BaseFlutterWindow {
 
   int64_t id_;
 
+  int proc_id_;
+
   // The Flutter instance hosted by this window.
   std::unique_ptr<flutter::FlutterViewController> flutter_controller_;
 
