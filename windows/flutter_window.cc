@@ -128,7 +128,8 @@ FlutterWindow::FlutterWindow(
   UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
   scale_factor_ = dpi / 96.0;
 
-  HWND window_handle = CreateWindow(
+  HWND window_handle = CreateWindowEx(
+      WS_EX_APPWINDOW,
       kFlutterWindowClassName, L"", WS_OVERLAPPEDWINDOW,
       Scale(target_point.x, scale_factor_), Scale(target_point.y, scale_factor_),
       Scale(1280, scale_factor_), Scale(720, scale_factor_),
