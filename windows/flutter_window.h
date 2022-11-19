@@ -71,8 +71,6 @@ class FlutterWindow : public BaseFlutterWindow {
 
   void Destroy();
 
-  void ForceChildRefresh();
-
   void EmitEvent(const char* eventName);
 };
 

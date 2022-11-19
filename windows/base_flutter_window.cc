@@ -442,3 +442,22 @@ bool BaseFlutterWindow::IsFrameless()
 {
     return is_frameless_;
 }
+
+
+void BaseFlutterWindow::ForceChildRefresh() {
+  auto handle = GetWindowHandle();
+  if (!handle) {
+    return;
+  }
+  handle = GetWindow(handle, GW_CHILD);
+  RECT rect;
+  GetWindowRect(handle, &rect);
+  SetWindowPos(
+      handle, nullptr, rect.left, rect.top, rect.right - rect.left + 1,
+      rect.bottom - rect.top,
+      SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_FRAMECHANGED);
+  SetWindowPos(
+      handle, nullptr, rect.left, rect.top, rect.right - rect.left,
+      rect.bottom - rect.top,
+      SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_FRAMECHANGED);
+}

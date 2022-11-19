@@ -128,12 +128,11 @@ FlutterWindow::FlutterWindow(
   UINT dpi = FlutterDesktopGetDpiForMonitor(monitor);
   scale_factor_ = dpi / 96.0;
 
-  HWND window_handle = CreateWindowEx(
-      WS_EX_APPWINDOW,
+  HWND window_handle = CreateWindow(
       kFlutterWindowClassName, L"", WS_OVERLAPPEDWINDOW,
       Scale(target_point.x, scale_factor_), Scale(target_point.y, scale_factor_),
       Scale(1280, scale_factor_), Scale(720, scale_factor_),
-      parent, nullptr, GetModuleHandle(nullptr), this);
+      nullptr, nullptr, GetModuleHandle(nullptr), this);
 
   RECT frame;
   GetClientRect(window_handle, &frame);
@@ -357,21 +356,6 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
   }
 
   return DefWindowProc(window_handle_, message, wparam, lparam);
-}
-
-void FlutterWindow::ForceChildRefresh() {
-    HWND hWnd = GetWindow(window_handle_, GW_CHILD);
-    RECT rect;
-
-    GetWindowRect(hWnd, &rect);
-    SetWindowPos(
-        hWnd, nullptr, rect.left, rect.top, rect.right - rect.left + 1,
-        rect.bottom - rect.top,
-        SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_FRAMECHANGED);
-    SetWindowPos(
-        hWnd, nullptr, rect.left, rect.top, rect.right - rect.left,
-        rect.bottom - rect.top,
-        SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_FRAMECHANGED);
 }
 
 void FlutterWindow::EmitEvent(const char* eventName)

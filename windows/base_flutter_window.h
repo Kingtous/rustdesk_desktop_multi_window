@@ -64,6 +64,8 @@ class BaseFlutterWindow {
 
   bool IsFrameless();
 
+  void ForceChildRefresh();
+
   std::string title_bar_style_ = "normal";
 
   virtual HWND GetWindowHandle() = 0;
