@@ -122,13 +122,13 @@ void BaseFlutterWindow::SetFullscreen(bool fullscreen) {
             monitor_info.rcMonitor.right - monitor_info.rcMonitor.left,
             monitor_info.rcMonitor.bottom - monitor_info.rcMonitor.top,
             SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
-        ::SendMessage(window, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
+        // ::SendMessage(window, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
     }
     else {
         ::SetWindowLong(window, GWL_STYLE, g_style_before_fullscreen);
         ::SetWindowLong(window, GWL_EXSTYLE, g_ex_style_before_fullscreen);
 
-        SendMessage(window, WM_SYSCOMMAND, SC_RESTORE, 0);
+        // SendMessage(window, WM_SYSCOMMAND, SC_RESTORE, 0);
 
         if (title_bar_style_ != g_title_bar_style_before_fullscreen) {
             flutter::EncodableMap args2 = flutter::EncodableMap();
@@ -294,7 +294,7 @@ void BaseFlutterWindow::SetTitleBarStyle(const flutter::EncodableMap& args) {
     SetWindowPos(hWnd, nullptr, rect.left, rect.top, 0, 0,
         SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE |
         SWP_FRAMECHANGED);
-    std::cout << "set title bar styled" << std::endl;
+    // std::cout << "set title bar styled" << std::endl;
 }
 
 void BaseFlutterWindow::SetAsFrameless() {
