@@ -124,19 +124,19 @@ class DesktopMultiWindow {
 
   static List<MultiWindowListener> get listeners {
     final List<MultiWindowListener> localListeners =
-        List<MultiWindowListener>.from(_listeners!);
+        List<MultiWindowListener>.from(_listeners);
     return localListeners;
   }
 
   static bool get hasListeners {
-    return _listeners!.isNotEmpty;
+    return _listeners.isNotEmpty;
   }
 
   static void addListener(MultiWindowListener listener) {
-    _listeners!.add(listener);
+    _listeners.add(listener);
   }
 
   static void removeListener(MultiWindowListener listener) {
-    _listeners!.remove(listener);
+    _listeners.remove(listener);
   }
 }
