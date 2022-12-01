@@ -100,7 +100,7 @@ FlutterWindow::~FlutterWindow()
   g_signal_remove_emission_hook(g_signal_lookup("button-press-event", GTK_TYPE_WIDGET), this->pressedEmissionHook);
   if (this->window_)
   {
-    g_object_unref(this->window_);
+    gtk_widget_destroy(this->window_);
     this->window_ = nullptr;
   }
   if (this->window_channel_ != nullptr)
