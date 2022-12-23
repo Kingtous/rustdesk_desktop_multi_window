@@ -160,4 +160,12 @@ class WindowControllerMainImpl extends WindowController {
     };
     await _channel.invokeMethod('setPreventClose', arguments);
   }
+  
+  @override
+  Future<int> getXID() async {
+    final Map<String, dynamic> arguments = {
+      'windowId': _id
+    };
+    return await _channel.invokeMethod<int>('getXID', arguments) ?? -1;
+  }
 }

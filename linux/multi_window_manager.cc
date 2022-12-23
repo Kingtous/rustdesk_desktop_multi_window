@@ -305,3 +305,15 @@ void MultiWindowManager::SetPreventClose(int64_t id, bool setPreventClose) {
 pthread_rwlock_t* MultiWindowManager::get_map_lock() {
   return &this->windows_map_lock_;
 }
+
+int64_t MultiWindowManager::GetXID(int64_t id) {
+  RLOCK_WINDOW;
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    auto xid = window->second->GetXID();
+    UNLOCK_WINDOW;
+    return xid;
+  }
+  UNLOCK_WINDOW;
+  return -1;
+}

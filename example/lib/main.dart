@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:desktop_lifecycle/desktop_lifecycle.dart';
 import 'package:desktop_multi_window/desktop_multi_window.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/services/mouse_cursor.dart';
@@ -58,6 +60,14 @@ class _ExampleMainWindowState extends State<_ExampleMainWindow> {
         ),
         body: Column(
           children: [
+            if (Platform.isLinux)
+            FutureBuilder(builder: (context,data) {
+              if (data.hasData) {
+                return Text("WindowID: ${WindowController.main().windowId}, XID: ${data.data}");
+              } else {
+                return Text(data.error.toString());
+              }
+            }, future: WindowController.main().getXID(),),
             MouseRegion(
               cursor: SystemMouseCursors.alias,
               child: TextButton(
@@ -152,6 +162,9 @@ class _SubWindowContentState extends State<SubWindowContent>
   void initState() {
     super.initState();
     DesktopMultiWindow.addListener(this);
+    DesktopLifecycle.instance.isActive.addListener(() {
+      print("isActive: ${DesktopLifecycle.instance.isActive.value}");
+    });
   }
 
   @override
@@ -190,6 +203,14 @@ class _SubWindowContentState extends State<SubWindowContent>
         ),
         body: Column(
           children: [
+            if (Platform.isLinux)
+            FutureBuilder(builder: (context,data) {
+              if (data.hasData) {
+                return Text("WindowID: ${widget.windowController.windowId}, XID: ${data.data}");
+              } else {
+                return Text(data.error.toString());
+              }
+            }, future: widget.windowController.getXID(),),
             if (widget.args != null)
               Text(
                 'Arguments: ${widget.args.toString()}',

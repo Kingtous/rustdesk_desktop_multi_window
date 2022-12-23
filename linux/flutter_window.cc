@@ -26,6 +26,8 @@ FlutterWindow::FlutterWindow(
     const std::shared_ptr<FlutterWindowCallback> &callback) : callback_(callback), id_(id)
 {
   window_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+  printf("REMOVE ME================= NEW WINDOW: %p\n", GTK_WINDOW(window_));
+  fflush(stdout);
   gtk_window_set_decorated(GTK_WINDOW(window_), FALSE);
   gtk_window_set_default_size(GTK_WINDOW(window_), 1280, 720);
   gtk_window_set_position(GTK_WINDOW(window_), GTK_WIN_POS_CENTER);

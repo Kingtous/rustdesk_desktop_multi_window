@@ -78,4 +78,9 @@ abstract class WindowController {
   /// Set if intercept the native close signal. May useful when combine with the onclose event listener.
   /// This will also prevent the manually triggered close event.
   Future<void> setPreventClose(bool isPreventClose);
+
+  /// Get x11 id for specific window
+  /// 
+  /// This is only valid in x11/Linux.
+  Future<int> getXID();
 }
