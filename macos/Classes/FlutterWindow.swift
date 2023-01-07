@@ -142,7 +142,7 @@ class BaseFlutterWindow: NSObject {
 class FlutterWindowInner: NSWindow {
     override public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
         super.order(place, relativeTo: otherWin)
-        hiddenWindowAtLaunch()
+        hiddenSubWindowAtLaunch()
     }
 }
 
@@ -286,7 +286,7 @@ extension NSWindow {
             objc_setAssociatedObject(self, &AssociatedKeys.configured, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
     }
-    public func hiddenWindowAtLaunch() {
+    public func hiddenSubWindowAtLaunch() {
         if (!configured) {
             setIsVisible(false)
             configured = true
