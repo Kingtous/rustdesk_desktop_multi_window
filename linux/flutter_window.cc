@@ -26,11 +26,19 @@ FlutterWindow::FlutterWindow(
     const std::shared_ptr<FlutterWindowCallback> &callback) : callback_(callback), id_(id)
 {
   window_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-  printf("REMOVE ME================= NEW WINDOW: %p\n", GTK_WINDOW(window_));
-  fflush(stdout);
   gtk_window_set_decorated(GTK_WINDOW(window_), FALSE);
   gtk_window_set_default_size(GTK_WINDOW(window_), 1280, 720);
   gtk_window_set_position(GTK_WINDOW(window_), GTK_WIN_POS_CENTER);
+  // try setting icon for rustdesk, which uses the system cache 
+  // mainly for the icon in appimage.
+  GtkIconTheme* theme = gtk_icon_theme_get_default();
+  gint icons[4] = {256, 128, 64, 32};
+  for (int i = 0; i < 4; i++) {
+    GdkPixbuf* icon = gtk_icon_theme_load_icon(theme, "rustdesk", icons[i], GTK_ICON_LOOKUP_NO_SVG, NULL);
+    if (icon != nullptr) {
+      gtk_window_set_icon(GTK_WINDOW(window_), icon);
+    }
+  }
   // set gtk header bar
   // fix for the frame of sub window exists after hide header bar on wayland
   GtkHeaderBar *header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
@@ -181,8 +189,6 @@ gboolean onWindowStateChange(GtkWidget *widget,
                              gpointer arg)
 {
   auto *self = static_cast<FlutterWindow *>(arg);
-  printf("on state change: %p", self);
-  fflush(stdout);
   if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
   {
     if (!self->maximized)

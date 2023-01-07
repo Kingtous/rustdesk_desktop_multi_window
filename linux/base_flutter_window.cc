@@ -141,7 +141,6 @@ int64_t BaseFlutterWindow::GetXID() {
   }
   auto gdk_window = gtk_widget_get_window(GTK_WIDGET(window));
   auto xid = GDK_WINDOW_XID(gdk_window);
-  printf("REMOVE ME=====GTK_WINDOW:%p ,GDK_WINDOW:%p, xid: %ld\n",window, gdk_window, xid);
   fflush(stdout);
   return xid;
 }
