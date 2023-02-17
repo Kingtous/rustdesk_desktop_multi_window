@@ -60,7 +60,10 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
       let top = arguments["top"] as! Double
       let width = arguments["width"] as! Double
       let height = arguments["height"] as! Double
-      let rect = NSRect(x: left, y: top, width: width, height: height)
+      var rect = NSRect(x: left, y: top, width: width, height: height)
+      // fix: convert from origin coordinate to topLeft one
+      rect.topLeft.x = rect.origin.x
+      rect.topLeft.y = rect.origin.y
       MultiWindowManager.shared.setFrame(windowId: windowId, frame: rect)
       result(nil)
     case "getFrame":

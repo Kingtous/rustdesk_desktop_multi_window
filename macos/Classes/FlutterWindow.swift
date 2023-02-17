@@ -138,6 +138,14 @@ class BaseFlutterWindow: NSObject {
     }
 }
 
+/// Add extra hooks for window
+class FlutterWindowInner: NSWindow {
+    override public func order(_ place: NSWindow.OrderingMode, relativeTo otherWin: Int) {
+        super.order(place, relativeTo: otherWin)
+        hiddenSubWindowAtLaunch()
+    }
+}
+
 class FlutterWindow: BaseFlutterWindow {
   let windowId: Int64
 
@@ -147,7 +155,7 @@ class FlutterWindow: BaseFlutterWindow {
 
   init(id: Int64, arguments: String) {
     windowId = id
-    window = NSWindow(
+    window = FlutterWindowInner(
       contentRect: NSRect(x: 0, y: 0, width: 480, height: 270),
       styleMask: [.miniaturizable, .closable, .resizable, .titled, .fullSizeContentView],
       backing: .buffered, defer: false)
@@ -262,6 +270,26 @@ extension NSRect {
         get {
             let screenFrameRect = NSScreen.main!.frame
             return CGPoint(x: origin.x, y: screenFrameRect.height - origin.y - size.height)
+        }
+    }
+}
+
+extension NSWindow {
+    private struct AssociatedKeys {
+        static var configured: Bool = false
+    }
+    var configured: Bool {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.configured) as? Bool ?? false
+        }
+        set(value) {
+            objc_setAssociatedObject(self, &AssociatedKeys.configured, value, objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    public func hiddenSubWindowAtLaunch() {
+        if (!configured) {
+            setIsVisible(false)
+            configured = true
         }
     }
 }

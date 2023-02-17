@@ -58,6 +58,8 @@ public:
 
   void SetPreventClose(bool setPreventClose);
 
+  int64_t GetXID();
+
   bool isDragging = false;
   bool isResizing = false;
   GtkWidget *event_box = nullptr;

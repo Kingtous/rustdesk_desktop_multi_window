@@ -4,6 +4,8 @@
 
 #include "base_flutter_window.h"
 
+#include <gtk/gtkx.h>
+
 BaseFlutterWindow::BaseFlutterWindow() {
 }
 
@@ -130,6 +132,17 @@ void BaseFlutterWindow::Maximize() {
   }
   gtk_window_maximize(window);
   this->maximized = true;
+}
+
+int64_t BaseFlutterWindow::GetXID() {
+  auto window = GetWindow();
+  if (!window) {
+    return -1;
+  }
+  auto gdk_window = gtk_widget_get_window(GTK_WIDGET(window));
+  auto xid = GDK_WINDOW_XID(gdk_window);
+  fflush(stdout);
+  return xid;
 }
 
 void BaseFlutterWindow::Unmaximize() {
