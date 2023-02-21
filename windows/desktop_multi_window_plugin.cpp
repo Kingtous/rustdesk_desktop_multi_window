@@ -119,8 +119,8 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
         std::get_if<flutter::EncodableMap>(method_call.arguments());
     auto window_id =
         arguments->at(flutter::EncodableValue("windowId")).LongValue();
-    MultiWindowManager::Instance()->IsFullscreen(window_id);
-    result->Success();
+    auto isFullScreen = MultiWindowManager::Instance()->IsFullscreen(window_id);
+    result->Success(flutter::EncodableValue(isFullScreen));
     return;
   } else if (method_call.method_name() == "startDragging") {
     auto window_id = method_call.arguments()->LongValue();

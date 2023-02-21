@@ -317,3 +317,11 @@ int64_t MultiWindowManager::GetXID(int64_t id) {
   UNLOCK_WINDOW;
   return -1;
 }
+
+bool MultiWindowManager::IsFullScreen(int64_t id) {
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    return window->second->IsFullScreen();
+  }
+  return false;
+}

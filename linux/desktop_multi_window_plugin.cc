@@ -88,6 +88,12 @@ static void desktop_multi_window_plugin_handle_method_call(
     auto fullscreen = fl_value_get_bool(fl_value_lookup_string(args, "fullscreen"));
     MultiWindowManager::Instance()->SetFullscreen(window_id, fullscreen);
     response = FL_METHOD_RESPONSE(fl_method_success_response_new(nullptr));
+  } else if (strcmp(method, "isFullScreen") == 0) {
+    auto *args = fl_method_call_get_args(method_call);
+    auto window_id = fl_value_get_int(fl_value_lookup_string(args, "windowId"));
+    auto isFullScreen = MultiWindowManager::Instance()->IsFullScreen(window_id);
+    response = FL_METHOD_RESPONSE(
+        fl_method_success_response_new(fl_value_new_bool(isFullScreen)));
   } else if (strcmp(method, "startDragging") == 0) {
     auto *args = fl_method_call_get_args(method_call);
     auto window_id = fl_value_get_int(args);

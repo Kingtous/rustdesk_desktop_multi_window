@@ -25,6 +25,8 @@ public:
 
   void Focus();
 
+  bool IsFullScreen();
+
   void SetFullscreen(bool fullscreen);
 
   void Close();
