@@ -254,3 +254,11 @@ void MultiWindowManager::SetPreventClose(int64_t id, bool setPreventClose) {
     return window->second->SetPreventClose(setPreventClose);
   }
 }
+
+bool MultiWindowManager::IsFullscreen(int64_t id) {
+  auto window = windows_.find(id);
+  if (window != windows_.end()) {
+    return window->second->IsFullscreen();
+  }
+  return false;
+}

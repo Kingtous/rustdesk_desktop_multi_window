@@ -49,6 +49,9 @@ abstract class WindowController {
   /// show the window of window
   Future<void> showTitleBar(bool show);
 
+  /// Indicate if the window is in fullscreen mode.
+  Future<bool> isFullScreen();
+
   /// Make the window full screen or not
   Future<void> setFullscreen(bool fullscreen);
 

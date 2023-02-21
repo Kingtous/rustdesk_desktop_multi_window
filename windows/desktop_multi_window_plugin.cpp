@@ -114,44 +114,48 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
     MultiWindowManager::Instance()->SetFullscreen(window_id, fullscreen);
     result->Success();
     return;
-  }
-  else if (method_call.method_name() == "startDragging") {
-      auto window_id = method_call.arguments()->LongValue();
-      MultiWindowManager::Instance()->StartDragging(window_id);
-      result->Success();
-      return;
-  }
-  else if (method_call.method_name() == "maximize") {
-      auto window_id = method_call.arguments()->LongValue();
-      MultiWindowManager::Instance()->Maximize(window_id);
-      result->Success();
-      return;
-  }
-  else if (method_call.method_name() == "minimize") {
-      auto window_id = method_call.arguments()->LongValue();
-      MultiWindowManager::Instance()->Minimize(window_id);
-      result->Success();
-      return;
-  }
-  else if (method_call.method_name() == "unmaximize") {
-      auto window_id = method_call.arguments()->LongValue();
-      MultiWindowManager::Instance()->Unmaximize(window_id);
-      result->Success();
-      return;
-  }
-  else if (method_call.method_name() == "isMaximized") {
-      auto window_id = method_call.arguments()->LongValue();
-      auto res = MultiWindowManager::Instance()->IsMaximized(window_id);
-      result->Success(flutter::EncodableValue(res));
-      return;
-  }
-  else if (method_call.method_name() == "showTitleBar") {
-      auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
-      auto window_id = arguments->at(flutter::EncodableValue("windowId")).LongValue();
-      auto show = std::get<bool>(arguments->at(flutter::EncodableValue("show")));
-      MultiWindowManager::Instance()->ShowTitlebar(window_id, show);
-      result->Success();
-      return;
+  } else if (method_call.method_name() == "isFullscreen") {
+    auto *arguments =
+        std::get_if<flutter::EncodableMap>(method_call.arguments());
+    auto window_id =
+        arguments->at(flutter::EncodableValue("windowId")).LongValue();
+    MultiWindowManager::Instance()->IsFullscreen(window_id);
+    result->Success();
+    return;
+  } else if (method_call.method_name() == "startDragging") {
+    auto window_id = method_call.arguments()->LongValue();
+    MultiWindowManager::Instance()->StartDragging(window_id);
+    result->Success();
+    return;
+  } else if (method_call.method_name() == "maximize") {
+    auto window_id = method_call.arguments()->LongValue();
+    MultiWindowManager::Instance()->Maximize(window_id);
+    result->Success();
+    return;
+  } else if (method_call.method_name() == "minimize") {
+    auto window_id = method_call.arguments()->LongValue();
+    MultiWindowManager::Instance()->Minimize(window_id);
+    result->Success();
+    return;
+  } else if (method_call.method_name() == "unmaximize") {
+    auto window_id = method_call.arguments()->LongValue();
+    MultiWindowManager::Instance()->Unmaximize(window_id);
+    result->Success();
+    return;
+  } else if (method_call.method_name() == "isMaximized") {
+    auto window_id = method_call.arguments()->LongValue();
+    auto res = MultiWindowManager::Instance()->IsMaximized(window_id);
+    result->Success(flutter::EncodableValue(res));
+    return;
+  } else if (method_call.method_name() == "showTitleBar") {
+    auto *arguments =
+        std::get_if<flutter::EncodableMap>(method_call.arguments());
+    auto window_id =
+        arguments->at(flutter::EncodableValue("windowId")).LongValue();
+    auto show = std::get<bool>(arguments->at(flutter::EncodableValue("show")));
+    MultiWindowManager::Instance()->ShowTitlebar(window_id, show);
+    result->Success();
+    return;
   } else if (method_call.method_name() == "startResizing") {
     auto *arguments =
         std::get_if<flutter::EncodableMap>(method_call.arguments());

@@ -168,4 +168,11 @@ class WindowControllerMainImpl extends WindowController {
     };
     return await _channel.invokeMethod<int>('getXID', arguments) ?? -1;
   }
+  
+  @override
+  Future<bool> isFullScreen() async {
+    final Map<String, dynamic> arguments = {'windowId': _id};
+    return await _channel.invokeMethod<bool>('isFullScreen', arguments) ??
+        false;
+  }
 }

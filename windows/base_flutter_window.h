@@ -25,6 +25,8 @@ class BaseFlutterWindow {
 
   void Focus();
 
+  bool IsFullscreen();
+
   void SetFullscreen(bool fullscreen);
 
   void Maximize(const flutter::EncodableMap& args);

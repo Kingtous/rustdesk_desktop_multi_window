@@ -461,3 +461,5 @@ void BaseFlutterWindow::ForceChildRefresh() {
       rect.bottom - rect.top,
       SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_FRAMECHANGED);
 }
+
+bool BaseFlutterWindow::IsFullscreen() { return g_is_window_fullscreen; }

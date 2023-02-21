@@ -33,6 +33,7 @@ dependencies:
   url_launcher:
   # tray_manager:
   # window_manager: ^0.2.7
+  texture_rgba_renderer:
   window_size:
     git:
         url: https://github.com/google/flutter-desktop-embedding.git
