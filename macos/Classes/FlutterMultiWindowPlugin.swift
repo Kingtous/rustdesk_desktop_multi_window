@@ -115,6 +115,11 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
       let showTitleBar = arguments["show"] as! Bool
       MultiWindowManager.shared.showTitleBar(windowId: windowId, show: showTitleBar)
       result(nil)
+    case "isFullScreen":
+      let arguments = call.arguments as! [String: Any?]
+      let windowId = arguments["windowId"] as! Int64
+      let isFullScreen = MultiWindowManager.shared.isFullScreen(windowId: windowId)
+      result(isFullScreen)
     case "setFullscreen":
       let arguments = call.arguments as! [String: Any?]
       let windowId = arguments["windowId"] as! Int64

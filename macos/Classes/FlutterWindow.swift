@@ -75,6 +75,10 @@ class BaseFlutterWindow: NSObject {
   func minimize() {
       window.miniaturize(nil)
   }
+    
+    func isFullScreen() -> Bool {
+        return window.styleMask.contains(.fullScreen)
+    }
 
   func setFullscreen(fullscreen: Bool) {
     if (fullscreen) {

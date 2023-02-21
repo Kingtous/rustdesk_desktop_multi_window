@@ -141,6 +141,14 @@ class MultiWindowManager {
     }
     window.unmaximize()
   }
+    
+    func isFullScreen(windowId: Int64) -> Bool {
+        guard let window = windows[windowId] else {
+          debugPrint("window \(windowId) not exists.")
+          return false
+        }
+        return window.isFullScreen()
+    }
 
   func setFullscreen(windowId: Int64, fullscreen: Bool) {
       guard let window = windows[windowId] else {
