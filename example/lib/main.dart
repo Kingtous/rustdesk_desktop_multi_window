@@ -198,7 +198,7 @@ class _SubWindowContentState extends State<SubWindowContent>
             onPanDown: (_) {
               widget.windowController.startDragging();
             },
-            child: Row(children: [Expanded(child: Text("Example App"))]),
+            child: Row(children: [Expanded(child: Text("Multi Window App"))]),
           ),
         ),
         body: Column(

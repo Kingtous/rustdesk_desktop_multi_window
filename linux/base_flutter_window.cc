@@ -310,6 +310,6 @@ void BaseFlutterWindow::SetPreventClose(bool setPreventClose) {
 
 bool BaseFlutterWindow::IsFullScreen() {
   auto window = GetWindow();
-  GdkWindowState state = gdk_window_get_state(get_gdk_window(window));
+  GdkWindowState state = gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(window)));
   return state & GDK_WINDOW_STATE_FULLSCREEN;
 }
