@@ -5,6 +5,7 @@
 #include "flutter_window.h"
 
 #include <iostream>
+#include <cairo/cairo.h>
 
 #include "include/desktop_multi_window/desktop_multi_window_plugin.h"
 #include "desktop_multi_window_plugin_internal.h"
@@ -18,6 +19,15 @@ namespace
 
   WindowCreatedCallback _g_window_created_callback = nullptr;
 
+}
+
+gboolean DrawCallback(GtkWidget* widget, cairo_t* cr, gpointer data) {
+  cairo_save(cr);
+  cairo_set_source_rgba(cr, 0.0, 0.0, 0.0, 0.0);
+  cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+  cairo_paint(cr);
+  cairo_restore(cr);
+  return FALSE;
 }
 
 FlutterWindow::FlutterWindow(
@@ -47,15 +57,12 @@ FlutterWindow::FlutterWindow(
   gtk_header_bar_set_show_close_button(header_bar, TRUE);
   gtk_window_set_titlebar(GTK_WINDOW(window_), GTK_WIDGET(header_bar));
 
-  gtk_widget_show(GTK_WIDGET(window_));
-
   g_autoptr(FlDartProject)
       project = fl_dart_project_new();
   const char *entrypoint_args[] = {"multi_window", g_strdup_printf("%ld", id_), args.c_str(), nullptr};
   fl_dart_project_set_dart_entrypoint_arguments(project, const_cast<char **>(entrypoint_args));
 
-  auto fl_view = fl_view_new(project);
-  gtk_widget_show(GTK_WIDGET(fl_view));
+  FlView* fl_view = fl_view_new(project);
   gtk_container_add(GTK_CONTAINER(window_), GTK_WIDGET(fl_view));
 
   if (_g_window_created_callback)
@@ -72,6 +79,21 @@ FlutterWindow::FlutterWindow(
 
   window_channel_ = WindowChannel::RegisterWithRegistrar(desktop_multi_window_registrar, id_);
 
+  // Refer to: https://github.com/alexmercerind/flutter_acrylic
+  //
+  // Set a transparent background for RustDesk.
+  // Because we need to control the whole remote screen better, especially for the edge part of the remote screen. We gives a padding for the flutter view, and set a transparent border surround with the flutter view.
+  gtk_widget_set_app_paintable(GTK_WIDGET(window_), TRUE);
+  auto screen = gdk_screen_get_default();
+  auto visual = gdk_screen_get_rgba_visual(screen);
+  if (visual != NULL && gdk_screen_is_composited(screen)) {
+    gtk_widget_set_visual(GTK_WIDGET(window_), visual);
+  }
+  g_signal_connect(G_OBJECT(window_), "draw", G_CALLBACK(DrawCallback), this);
+
+  gtk_widget_show(GTK_WIDGET(window_));
+  gtk_widget_show(GTK_WIDGET(fl_view));
+  
   g_signal_connect(window_, "delete-event", G_CALLBACK(onWindowClose), this);
   g_signal_connect(window_, "window-state-event",
                    G_CALLBACK(onWindowStateChange), this);

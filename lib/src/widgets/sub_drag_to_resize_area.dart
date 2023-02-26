@@ -65,7 +65,11 @@ class SubWindowDragToResizeArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        child,
+        Platform.isLinux ? 
+        Container(
+          margin: EdgeInsets.all(6.0),
+          child: child,
+        ): child,
         Positioned(
           child: Container(
             margin: resizeEdgeMargin,
