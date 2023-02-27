@@ -49,14 +49,17 @@ FlutterWindow::FlutterWindow(
       gtk_window_set_icon(GTK_WINDOW(window_), icon);
     }
   }
+
   // set gtk header bar
   // fix for the frame of sub window exists after hide header bar on wayland
-  GtkHeaderBar *header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
-  gtk_widget_show(GTK_WIDGET(header_bar));
-  gtk_header_bar_set_title(header_bar, "");
-  gtk_header_bar_set_show_close_button(header_bar, TRUE);
-  gtk_window_set_titlebar(GTK_WINDOW(window_), GTK_WIDGET(header_bar));
-
+  const char *display_server = getenv("WAYLAND_DISPLAY");
+  if (display_server) {
+    GtkHeaderBar *header_bar = GTK_HEADER_BAR(gtk_header_bar_new());
+    gtk_widget_show(GTK_WIDGET(header_bar));
+    gtk_header_bar_set_title(header_bar, "");
+    gtk_header_bar_set_show_close_button(header_bar, TRUE);
+    gtk_window_set_titlebar(GTK_WINDOW(window_), GTK_WIDGET(header_bar));
+  }
   g_autoptr(FlDartProject)
       project = fl_dart_project_new();
   const char *entrypoint_args[] = {"multi_window", g_strdup_printf("%ld", id_), args.c_str(), nullptr};
