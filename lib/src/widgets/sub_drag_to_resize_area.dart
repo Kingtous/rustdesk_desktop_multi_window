@@ -22,6 +22,7 @@ class SubWindowDragToResizeArea extends StatelessWidget {
   final double resizeEdgeSize;
   final Color resizeEdgeColor;
   final EdgeInsets resizeEdgeMargin;
+  final EdgeInsets childPadding;
   final List<SubWindowResizeEdge>? enableResizeEdges;
 
   const SubWindowDragToResizeArea({
@@ -31,7 +32,7 @@ class SubWindowDragToResizeArea extends StatelessWidget {
     this.resizeEdgeColor = Colors.transparent,
     this.resizeEdgeSize = 8,
     this.resizeEdgeMargin = EdgeInsets.zero,
-    this.enableResizeEdges,
+    this.enableResizeEdges, this.childPadding = EdgeInsets.zero,
   }) : super(key: key);
 
   Widget _buildDragToResizeEdge(
@@ -65,11 +66,10 @@ class SubWindowDragToResizeArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Platform.isLinux ? 
         Container(
-          margin: EdgeInsets.all(6.0),
+          margin: childPadding,
           child: child,
-        ): child,
+        ),
         Positioned(
           child: Container(
             margin: resizeEdgeMargin,
