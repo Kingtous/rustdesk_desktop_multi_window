@@ -211,47 +211,28 @@ gboolean onWindowStateChange(GtkWidget *widget,
                              gpointer arg)
 {
   auto *self = static_cast<FlutterWindow *>(arg);
-  if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
+  if (event->changed_mask & GDK_WINDOW_STATE_MAXIMIZED)
   {
-    if (!self->maximized)
-    {
-      self->maximized = true;
+    if (event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED) {
       _emitEvent("maximize", self);
+    } else {
+      _emitEvent("unmaximize", self);
     }
   }
-  if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED)
-  {
-    if (!self->minimized)
-    {
-      self->minimized = true;
+  if (event->changed_mask & GDK_WINDOW_STATE_ICONIFIED) {
+    if (event->new_window_state & GDK_WINDOW_STATE_ICONIFIED) {
       _emitEvent("minimize", self);
+    } else {
+      _emitEvent("restore", self);
     }
   }
-  if (event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN)
-  {
-    if (!self->fullscreen)
-    {
-      self->fullscreen = true;
+
+  if (event->changed_mask & GDK_WINDOW_STATE_FULLSCREEN) {
+    if (event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN) {
       _emitEvent("enter-full-screen", self);
+    } else {
+      _emitEvent("leave-full-screen", self);
     }
-  }
-  if (self->maximized &&
-      !(event->new_window_state & GDK_WINDOW_STATE_MAXIMIZED))
-  {
-    self->maximized = false;
-    _emitEvent("unmaximize", self);
-  }
-  if (self->minimized &&
-      !(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
-  {
-    self->minimized = false;
-    _emitEvent("restore", self);
-  }
-  if (self->fullscreen &&
-      !(event->new_window_state & GDK_WINDOW_STATE_FULLSCREEN))
-  {
-    self->fullscreen = false;
-    _emitEvent("leave-full-screen", self);
   }
   return false;
 }
