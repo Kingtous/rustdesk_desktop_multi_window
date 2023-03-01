@@ -200,6 +200,51 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
   auto child_content_ = flutter_controller_ ? flutter_controller_->view()->GetNativeWindow() : nullptr;
 
   switch (message) {
+    case WM_NCCALCSIZE: {
+        // This must always be first or else the one of other two ifs will execute
+        //  when window is in full screen and we don't want that
+        if (wparam && IsFullScreen()) {
+            // NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
+            // sz->rgrc[0].bottom -= 3;
+            return 0;
+        }
+        // This must always be before handling title_bar_style_ == "hidden" so
+        //  the if TitleBarStyle.hidden doesn't get executed.
+        if (wparam && IsFrameless()) {
+            NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
+            // Add borders when maximized so app doesn't get cut off.
+            if (IsMaximized()) {
+                sz->rgrc[0].left += 8;
+                sz->rgrc[0].top += 8;
+                sz->rgrc[0].right -= 8;
+                sz->rgrc[0].bottom -= 9;
+            }
+            // This cuts the app at the bottom by one pixel but that's necessary to
+            // prevent jitter when resizing the app
+            sz->rgrc[0].bottom += 1;
+            return 0;
+        }
+        if (wparam && this->title_bar_style_ == "hidden") {
+            NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
+            // Add 8 pixel to the top border when maximized so the app isn't cut off
+            if (this->IsMaximized()) {
+                sz->rgrc[0].top += 8;
+            }
+            else {
+                // on windows 10, if set to 0, there's a white line at the top
+                // of the app and I've yet to find a way to remove that.
+                sz->rgrc[0].top += IsWindows11OrGreater() ? 0 : 1;
+            }
+            sz->rgrc[0].right -= 8;
+            sz->rgrc[0].bottom -= 8;
+            sz->rgrc[0].left -= -8;
+            // Previously (WVR_HREDRAW | WVR_VREDRAW), but returning 0 or 1 doesn't
+            // actually break anything so I've set it to 0. Unless someone pointed a
+            // problem in the future.
+            return 0;
+        }
+        break;
+    }
     case WM_FONTCHANGE: {
       flutter_controller_->engine()->ReloadSystemFonts();
       break;
@@ -239,51 +284,6 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
                    newHeight, SWP_NOZORDER | SWP_NOACTIVATE);
 
       return 0;
-    }
-    case WM_NCCALCSIZE: {
-        // This must always be first or else the one of other two ifs will execute
-      //  when window is in full screen and we don't want that
-        if (wparam && IsFullScreen()) {
-            NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
-            sz->rgrc[0].bottom -= 3;
-            return 0;
-        }
-        // This must always be before handling title_bar_style_ == "hidden" so
-        //  the if TitleBarStyle.hidden doesn't get executed.
-        if (wparam && IsFrameless()) {
-            NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
-            // Add borders when maximized so app doesn't get cut off.
-            if (IsMaximized()) {
-                sz->rgrc[0].left += 8;
-                sz->rgrc[0].top += 8;
-                sz->rgrc[0].right -= 8;
-                sz->rgrc[0].bottom -= 9;
-            }
-            // This cuts the app at the bottom by one pixel but that's necessary to
-            // prevent jitter when resizing the app
-            sz->rgrc[0].bottom += 1;
-            return 0;
-        }
-        if (wparam && this->title_bar_style_ == "hidden") {
-            NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
-            // Add 8 pixel to the top border when maximized so the app isn't cut off
-            if (this->IsMaximized()) {
-                sz->rgrc[0].top += 8;
-            }
-            else {
-                // on windows 10, if set to 0, there's a white line at the top
-                // of the app and I've yet to find a way to remove that.
-                sz->rgrc[0].top += IsWindows11OrGreater() ? 0 : 1;
-            }
-            sz->rgrc[0].right -= 8;
-            sz->rgrc[0].bottom -= 8;
-            sz->rgrc[0].left -= -8;
-            // Previously (WVR_HREDRAW | WVR_VREDRAW), but returning 0 or 1 doesn't
-            // actually break anything so I've set it to 0. Unless someone pointed a
-            // problem in the future.
-            return 0;
-        }
-        break;
     }
     case WM_SIZE: {
       RECT rect;
