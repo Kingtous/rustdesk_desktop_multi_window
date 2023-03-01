@@ -8,6 +8,8 @@ import 'package:flutter/src/services/mouse_cursor.dart';
 import 'package:flutter_multi_window_example/event_widget.dart';
 import 'dart:ui' as ui;
 
+import 'package:flutter_multi_window_example/texture.dart';
+
 int winId = 0;
 
 void main(List<String> args) async {
@@ -21,10 +23,7 @@ void main(List<String> args) async {
     WindowController.fromWindowId(windowId).showTitleBar(false);
     WindowController.fromWindowId(windowId).show();
     WindowController.fromWindowId(windowId).focus();
-    runApp(_ExampleSubWindow(
-      windowController: WindowController.fromWindowId(windowId),
-      args: argument,
-    ));
+    runApp(MyTextureApp());
   } else {
     runApp(const _ExampleMainWindow());
   }

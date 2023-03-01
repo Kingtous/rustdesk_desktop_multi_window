@@ -6,7 +6,7 @@ description: Demonstrates how to use the flutter_multi_window plugin.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 environment:
-  sdk: ">=2.14.0 <3.0.0"
+  sdk: ">=2.17.0 <3.0.0"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -39,6 +39,7 @@ dependencies:
         url: https://github.com/google/flutter-desktop-embedding.git
         path: plugins/window_size
         ref: a738913c8ce2c9f47515382d40827e794a334274
+  ffi: ^2.0.1
 
 dev_dependencies:
   flutter_test:
