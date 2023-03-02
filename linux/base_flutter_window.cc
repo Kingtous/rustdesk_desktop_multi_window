@@ -17,6 +17,30 @@ void BaseFlutterWindow::Show() {
   gtk_widget_show(GTK_WIDGET(window));
 }
 
+void BaseFlutterWindow::BlockButtonPress() {
+  if (0 == flutterButtonPressHandler) {
+      flutterButtonPressHandler = g_signal_handler_find(
+          event_box, G_SIGNAL_MATCH_ID,
+          g_signal_lookup("button-press-event", GTK_TYPE_WIDGET), 0, NULL,
+          NULL, NULL);
+  }
+
+  if (isFlutterButtonPressBlocked) {
+      return;
+  }
+  g_signal_handler_block(event_box, flutterButtonPressHandler);
+  isFlutterButtonPressBlocked = true;
+}
+
+void BaseFlutterWindow::UnblockButtonPress() {
+  if (!isFlutterButtonPressBlocked) {
+      return;
+  }
+  isFlutterButtonPressBlocked = false;
+  g_signal_handler_unblock(event_box, flutterButtonPressHandler);
+}
+
+
 void BaseFlutterWindow::Hide() {
   auto window = GetWindow();
   if (!window) {
@@ -260,6 +284,23 @@ gboolean onMousePressHook(GSignalInvocationHint *ihint, guint n_param_values,
   return TRUE;
 }
 
+gboolean onMouseReleaseHook(GSignalInvocationHint *ihint,
+                                   guint n_param_values,
+                                   const GValue *param_values, gpointer data) {
+    auto self = reinterpret_cast<BaseFlutterWindow *>(data);
+
+    gpointer instance = g_value_peek_pointer(param_values);
+
+    if (!GTK_IS_EVENT_BOX(instance)) {
+        return TRUE;
+    }
+    // GdkEventButton *event = (GdkEventButton*)(g_value_get_boxed(param_values
+    // + 1));
+    self->UnblockButtonPress();
+
+    return TRUE;
+}
+
 void BaseFlutterWindow::StartResizing(FlValue *args) {
   auto window = GetWindow();
   const gchar *resize_edge =
@@ -293,10 +334,11 @@ void BaseFlutterWindow::StartResizing(FlValue *args) {
     gdk_window_edge = GDK_WINDOW_EDGE_SOUTH_EAST;
   }
 
+  this->BlockButtonPress();
+  this->isResizing = true;
   gtk_window_begin_resize_drag(window, gdk_window_edge,
                                this->currentPressedEvent.button, root_x, root_y,
                                timestamp);
-  this->isResizing = true;
 }
 
 

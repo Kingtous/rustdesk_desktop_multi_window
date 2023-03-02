@@ -60,12 +60,18 @@ public:
 
   void SetPreventClose(bool setPreventClose);
 
+  void BlockButtonPress();
+
+  void UnblockButtonPress();
+
   int64_t GetXID();
 
   bool isDragging = false;
   bool isResizing = false;
   GtkWidget *event_box = nullptr;
   GdkEventButton currentPressedEvent = GdkEventButton{};
+  gulong flutterButtonPressHandler = 0;
+  gboolean isFlutterButtonPressBlocked = false;
 
   bool maximized = false;
   bool minimized = false;
@@ -82,5 +88,9 @@ gboolean onWindowEventAfter(GtkWidget *text_view, GdkEvent *event,
 
 gboolean onMousePressHook(GSignalInvocationHint *ihint, guint n_param_values,
                           const GValue *param_values, gpointer data);
+
+gboolean onMouseReleaseHook(GSignalInvocationHint *ihint,
+                                   guint n_param_values,
+                                   const GValue *param_values, gpointer data);
 
 #endif // DESKTOP_MULTI_WINDOW_LINUX_BASE_FLUTTER_WINDOW_H_
