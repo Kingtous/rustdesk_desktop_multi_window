@@ -98,7 +98,9 @@ void BaseFlutterWindow::SetFullscreen(bool fullscreen) {
         g_title_bar_style_before_fullscreen = title_bar_style_;
         g_is_frameless_before_fullscreen = is_frameless_;
     }
-
+    // this variable should be set before telling windows to change the fullscreen status. 
+    // Or the right and bottom area would be cut off after cancelling the fullscreen.
+    g_is_window_fullscreen = fullscreen;
     if (fullscreen) {
         flutter::EncodableMap args2 = flutter::EncodableMap();
         args2[flutter::EncodableValue("titleBarStyle")] =
@@ -155,7 +157,6 @@ void BaseFlutterWindow::SetFullscreen(bool fullscreen) {
                 SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
         }
     }
-    g_is_window_fullscreen = fullscreen;
 }
 
 void BaseFlutterWindow::StartDragging() {
@@ -431,11 +432,6 @@ bool BaseFlutterWindow::IsPreventClose() {
 
 void BaseFlutterWindow::SetPreventClose(bool setPreventClose) {
   this->is_prevent_close_ = setPreventClose;
-}
-
-bool BaseFlutterWindow::IsFullScreen()
-{
-    return g_is_window_fullscreen;
 }
 
 bool BaseFlutterWindow::IsFrameless()

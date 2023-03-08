@@ -203,7 +203,10 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
     case WM_NCCALCSIZE: {
         // This must always be first or else the one of other two ifs will execute
         //  when window is in full screen and we don't want that
-        if (wparam && IsFullScreen()) {
+        if (wparam && IsFullscreen()) {
+            // Note:
+            // I dont know why we should -3 on the bottom. 
+            //
             // NCCALCSIZE_PARAMS* sz = reinterpret_cast<NCCALCSIZE_PARAMS*>(lparam);
             // sz->rgrc[0].bottom -= 3;
             return 0;

@@ -62,8 +62,6 @@ class BaseFlutterWindow {
 
   void SetPreventClose(bool setPreventClose);
 
-  bool IsFullScreen();
-
   bool IsFrameless();
 
   void ForceChildRefresh();
