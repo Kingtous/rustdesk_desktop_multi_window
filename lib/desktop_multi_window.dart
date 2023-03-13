@@ -118,7 +118,7 @@ class DesktopMultiWindow {
         kWindowEventEnterFullScreen: listener.onWindowEnterFullScreen,
         kWindowEventLeaveFullScreen: listener.onWindowLeaveFullScreen,
       };
-      funcMap[eventName]!();
+      funcMap[eventName]?.call();
     }
   }
 

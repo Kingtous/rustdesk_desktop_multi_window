@@ -147,7 +147,14 @@ void BaseFlutterWindow::StartDragging() {
   this->isDragging = true;
 }
 
-bool BaseFlutterWindow::IsMaximized() { return this->maximized; }
+bool BaseFlutterWindow::IsMaximized() { 
+  auto window = GetWindow();
+  if (!window) {
+    return false;
+  }
+  GdkWindowState state = gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(window)));
+  return state & GDK_WINDOW_STATE_ICONIFIED;
+}
 
 void BaseFlutterWindow::Maximize() {
   auto window = GetWindow();
@@ -155,7 +162,6 @@ void BaseFlutterWindow::Maximize() {
     return;
   }
   gtk_window_maximize(window);
-  this->maximized = true;
 }
 
 int64_t BaseFlutterWindow::GetXID() {
@@ -175,7 +181,6 @@ void BaseFlutterWindow::Unmaximize() {
     return;
   }
   gtk_window_unmaximize(window);
-  this->maximized = false;
 }
 
 void BaseFlutterWindow::Minimize() {
@@ -335,10 +340,10 @@ void BaseFlutterWindow::StartResizing(FlValue *args) {
   }
 
   this->BlockButtonPress();
-  this->isResizing = true;
   gtk_window_begin_resize_drag(window, gdk_window_edge,
                                this->currentPressedEvent.button, root_x, root_y,
                                timestamp);
+  this->isResizing = true;
 }
 
 

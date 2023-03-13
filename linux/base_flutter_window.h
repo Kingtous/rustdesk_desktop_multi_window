@@ -73,10 +73,6 @@ public:
   gulong flutterButtonPressHandler = 0;
   gboolean isFlutterButtonPressBlocked = false;
 
-  bool maximized = false;
-  bool minimized = false;
-  bool fullscreen = false;
-
   bool isPreventClose = false;
 protected:
   virtual GtkWindow *GetWindow() = 0;

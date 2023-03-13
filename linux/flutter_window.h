@@ -61,6 +61,10 @@ gboolean onWindowBlur(GtkWidget *widget, GdkEvent *event, gpointer data);
 
 gboolean onWindowResize(GtkWidget *widget, gpointer data);
 
+gboolean onWindowShow(GtkWidget *widget, gpointer data);
+
+gboolean onWindowHide(GtkWidget *widget, gpointer data);
+
 gboolean onWindowMove(GtkWidget *widget, GdkEvent *event, gpointer data);
 
 gboolean onWindowClose(GtkWidget *widget, GdkEvent *event, gpointer arg);

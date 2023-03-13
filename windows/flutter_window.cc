@@ -248,6 +248,14 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
         }
         break;
     }
+    case WM_SHOWWINDOW: {
+      if (wparam == TRUE) {
+        EmitEvent("show");
+      } else {
+        EmitEvent("hide");
+      }
+      break;
+    }
     case WM_FONTCHANGE: {
       flutter_controller_->engine()->ReloadSystemFonts();
       break;

@@ -108,6 +108,10 @@ FlutterWindow::FlutterWindow(
                    G_CALLBACK(onWindowMove), this);
   g_signal_connect(window_, "check-resize",
                    G_CALLBACK(onWindowResize), this);
+  g_signal_connect(window_, "show", G_CALLBACK(onWindowShow),
+                   this);
+  g_signal_connect(window_, "hide", G_CALLBACK(onWindowHide),
+                   this);
   // enhance drag
   g_signal_connect(window_, "event-after", G_CALLBACK(onWindowEventAfter),
                    this);
@@ -202,6 +206,22 @@ gboolean onWindowResize(GtkWidget *widget, gpointer data)
 {
   auto *self = static_cast<FlutterWindow *>(data);
   _emitEvent("resize", self);
+  return false;
+}
+
+
+gboolean onWindowShow(GtkWidget *widget, gpointer data)
+{
+  auto *self = static_cast<FlutterWindow *>(data);
+  _emitEvent("show", self);
+  return false;
+}
+
+
+gboolean onWindowHide(GtkWidget *widget, gpointer data)
+{
+  auto *self = static_cast<FlutterWindow *>(data);
+  _emitEvent("hide", self);
   return false;
 }
 
