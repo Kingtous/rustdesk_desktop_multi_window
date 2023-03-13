@@ -153,7 +153,7 @@ bool BaseFlutterWindow::IsMaximized() {
     return false;
   }
   GdkWindowState state = gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(window)));
-  return state & GDK_WINDOW_STATE_ICONIFIED;
+  return state & GDK_WINDOW_STATE_MAXIMIZED;
 }
 
 void BaseFlutterWindow::Maximize() {
