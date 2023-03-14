@@ -54,6 +54,9 @@ class _DragToResizeEdgeState extends State<DragToResizeEdge> {
       child: Listener(
         onPointerDown: (_) => WindowController.fromWindowId(widget.windowId)
             .startResizing(widget.resizeEdge),
+        onPointerUp: (_) => setState(() {
+          cursor = widget.resizeCursor;
+        }),
         child: MouseRegion(
           cursor: cursor,
           onEnter: (evt) => setState(() {
