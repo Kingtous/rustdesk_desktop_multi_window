@@ -16,6 +16,62 @@ enum SubWindowResizeEdge {
   bottomRight
 }
 
+class DragToResizeEdge extends StatefulWidget {
+  final SubWindowResizeEdge resizeEdge;
+  final double? width;
+  final double? height;
+  final Color resizeEdgeColor;
+  final MouseCursor resizeCursor;
+  final int windowId;
+  DragToResizeEdge({
+    Key? key,
+    this.width,
+    this.height,
+    required this.resizeEdge,
+    required this.resizeEdgeColor,
+    required this.resizeCursor,
+    required this.windowId,
+  });
+
+  @override
+  State<DragToResizeEdge> createState() => _DragToResizeEdgeState();
+}
+
+class _DragToResizeEdgeState extends State<DragToResizeEdge> {
+  MouseCursor cursor = MouseCursor.defer;
+
+  @override
+  void initState() {
+    cursor = widget.resizeCursor;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: widget.width,
+      height: widget.height,
+      color: widget.resizeEdgeColor,
+      child: Listener(
+        onPointerDown: (_) => WindowController.fromWindowId(widget.windowId)
+            .startResizing(widget.resizeEdge),
+        child: MouseRegion(
+          cursor: cursor,
+          onEnter: (evt) => setState(() {
+            cursor = evt.buttons != 0 ? MouseCursor.defer : widget.resizeCursor;
+          }),
+          child: GestureDetector(
+            onDoubleTap: () => (Platform.isWindows &&
+                    (widget.resizeEdge == SubWindowResizeEdge.top ||
+                        widget.resizeEdge == SubWindowResizeEdge.bottom))
+                ? WindowController.fromWindowId(widget.windowId).maximize()
+                : null,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class SubWindowDragToResizeArea extends StatelessWidget {
   final int windowId;
   final Widget child;
@@ -36,37 +92,11 @@ class SubWindowDragToResizeArea extends StatelessWidget {
     this.childPadding = EdgeInsets.zero,
   }) : super(key: key);
 
-  Widget _buildDragToResizeEdge(
-    SubWindowResizeEdge resizeEdge, {
-    MouseCursor cursor = SystemMouseCursors.basic,
-    double? width,
-    double? height,
-  }) {
-    if (enableResizeEdges != null && !enableResizeEdges!.contains(resizeEdge))
-      return Container();
-    return Container(
-      width: width,
-      height: height,
-      color: this.resizeEdgeColor,
-      child: Listener(
-        onPointerDown: (_) =>
-            WindowController.fromWindowId(windowId).startResizing(resizeEdge),
-        child: MouseRegion(
-          cursor: cursor,
-          child: GestureDetector(
-            onDoubleTap: () => (Platform.isWindows &&
-                    (resizeEdge == SubWindowResizeEdge.top ||
-                        resizeEdge == SubWindowResizeEdge.bottom))
-                ? WindowController.fromWindowId(windowId).maximize()
-                : null,
-          ),
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    getOffstage(SubWindowResizeEdge resizeEdge) =>
+        enableResizeEdges != null && !enableResizeEdges!.contains(resizeEdge);
+
     return Stack(
       children: <Widget>[
         Container(
@@ -80,25 +110,40 @@ class SubWindowDragToResizeArea extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    _buildDragToResizeEdge(
-                      SubWindowResizeEdge.topLeft,
-                      cursor: SystemMouseCursors.resizeUpLeft,
-                      width: resizeEdgeSize,
-                      height: resizeEdgeSize,
+                    Offstage(
+                      offstage: getOffstage(SubWindowResizeEdge.topLeft),
+                      child: DragToResizeEdge(
+                        resizeEdge: SubWindowResizeEdge.topLeft,
+                        width: resizeEdgeSize,
+                        height: resizeEdgeSize,
+                        resizeEdgeColor: resizeEdgeColor,
+                        resizeCursor: SystemMouseCursors.resizeUpLeft,
+                        windowId: windowId,
+                      ),
                     ),
                     Expanded(
                       flex: 1,
-                      child: _buildDragToResizeEdge(
-                        SubWindowResizeEdge.top,
-                        cursor: SystemMouseCursors.resizeUp,
-                        height: resizeEdgeSize,
+                      child: Offstage(
+                        offstage: getOffstage(SubWindowResizeEdge.top),
+                        child: DragToResizeEdge(
+                          resizeEdge: SubWindowResizeEdge.top,
+                          height: resizeEdgeSize,
+                          resizeEdgeColor: resizeEdgeColor,
+                          resizeCursor: SystemMouseCursors.resizeUp,
+                          windowId: windowId,
+                        ),
                       ),
                     ),
-                    _buildDragToResizeEdge(
-                      SubWindowResizeEdge.topRight,
-                      cursor: SystemMouseCursors.resizeUpRight,
-                      width: resizeEdgeSize,
-                      height: resizeEdgeSize,
+                    Offstage(
+                      offstage: getOffstage(SubWindowResizeEdge.topRight),
+                      child: DragToResizeEdge(
+                        resizeEdge: SubWindowResizeEdge.topRight,
+                        width: resizeEdgeSize,
+                        height: resizeEdgeSize,
+                        resizeEdgeColor: resizeEdgeColor,
+                        resizeCursor: SystemMouseCursors.resizeUpRight,
+                        windowId: windowId,
+                      ),
                     ),
                   ],
                 ),
@@ -106,46 +151,82 @@ class SubWindowDragToResizeArea extends StatelessWidget {
                   flex: 1,
                   child: Row(
                     children: [
-                      _buildDragToResizeEdge(
-                        SubWindowResizeEdge.left,
-                        cursor: SystemMouseCursors.resizeLeft,
-                        width: resizeEdgeSize,
-                        height: double.infinity,
+                      Offstage(
+                        offstage: getOffstage(SubWindowResizeEdge.left),
+                        child: DragToResizeEdge(
+                          resizeEdge: SubWindowResizeEdge.left,
+                          width: resizeEdgeSize,
+                          height: double.infinity,
+                          resizeEdgeColor: resizeEdgeColor,
+                          resizeCursor: SystemMouseCursors.resizeLeft,
+                          windowId: windowId,
+                        ),
+                      ),
+                      Offstage(
+                        offstage: getOffstage(SubWindowResizeEdge.left),
+                        child: DragToResizeEdge(
+                          resizeEdge: SubWindowResizeEdge.left,
+                          width: resizeEdgeSize,
+                          height: double.infinity,
+                          resizeEdgeColor: resizeEdgeColor,
+                          resizeCursor: SystemMouseCursors.resizeLeft,
+                          windowId: windowId,
+                        ),
                       ),
                       Expanded(
                         flex: 1,
                         child: Container(),
                       ),
-                      _buildDragToResizeEdge(
-                        SubWindowResizeEdge.right,
-                        cursor: SystemMouseCursors.resizeRight,
-                        width: resizeEdgeSize,
-                        height: double.infinity,
+                      Offstage(
+                        offstage: getOffstage(SubWindowResizeEdge.right),
+                        child: DragToResizeEdge(
+                          resizeEdge: SubWindowResizeEdge.right,
+                          width: resizeEdgeSize,
+                          height: double.infinity,
+                          resizeEdgeColor: resizeEdgeColor,
+                          resizeCursor: SystemMouseCursors.resizeRight,
+                          windowId: windowId,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 Row(
                   children: [
-                    _buildDragToResizeEdge(
-                      SubWindowResizeEdge.bottomLeft,
-                      cursor: SystemMouseCursors.resizeDownLeft,
-                      width: resizeEdgeSize,
-                      height: resizeEdgeSize,
+                    Offstage(
+                      offstage: getOffstage(SubWindowResizeEdge.bottomLeft),
+                      child: DragToResizeEdge(
+                        resizeEdge: SubWindowResizeEdge.bottomLeft,
+                        width: resizeEdgeSize,
+                        height: resizeEdgeSize,
+                        resizeEdgeColor: resizeEdgeColor,
+                        resizeCursor: SystemMouseCursors.resizeDownLeft,
+                        windowId: windowId,
+                      ),
                     ),
                     Expanded(
                       flex: 1,
-                      child: _buildDragToResizeEdge(
-                        SubWindowResizeEdge.bottom,
-                        cursor: SystemMouseCursors.resizeDown,
-                        height: resizeEdgeSize,
+                      child: Offstage(
+                        offstage: getOffstage(SubWindowResizeEdge.bottom),
+                        child: DragToResizeEdge(
+                          resizeEdge: SubWindowResizeEdge.bottom,
+                          height: resizeEdgeSize,
+                          resizeEdgeColor: resizeEdgeColor,
+                          resizeCursor: SystemMouseCursors.resizeDown,
+                          windowId: windowId,
+                        ),
                       ),
                     ),
-                    _buildDragToResizeEdge(
-                      SubWindowResizeEdge.bottomRight,
-                      cursor: SystemMouseCursors.resizeDownRight,
-                      width: resizeEdgeSize,
-                      height: resizeEdgeSize,
+                    Offstage(
+                      offstage: getOffstage(SubWindowResizeEdge.bottomRight),
+                      child: DragToResizeEdge(
+                        resizeEdge: SubWindowResizeEdge.bottomRight,
+                        width: resizeEdgeSize,
+                        height: resizeEdgeSize,
+                        resizeEdgeColor: resizeEdgeColor,
+                        resizeCursor: SystemMouseCursors.resizeDownRight,
+                        windowId: windowId,
+                      ),
                     ),
                   ],
                 ),
