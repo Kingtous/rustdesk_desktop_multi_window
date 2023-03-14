@@ -57,58 +57,63 @@ class _ExampleMainWindowState extends State<_ExampleMainWindow> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Column(
-          children: [
-            if (Platform.isLinux)
-              FutureBuilder(
-                builder: (context, data) {
-                  if (data.hasData) {
-                    return Text(
-                        "WindowID: ${WindowController.main().windowId}, XID: ${data.data}");
-                  } else {
-                    return Text(data.error.toString());
+        body: Listener(
+          onPointerDown: (_) => debugPrint("down"),
+          onPointerUp: (_) => debugPrint("up"),
+          child: Column(
+            children: [
+              if (Platform.isLinux)
+                FutureBuilder(
+                  builder: (context, data) {
+                    if (data.hasData) {
+                      return Text(
+                          "WindowID: ${WindowController.main().windowId}, XID: ${data.data}");
+                    } else {
+                      return Text(data.error.toString());
+                    }
+                  },
+                  future: WindowController.main().getXID(),
+                ),
+              MouseRegion(
+                cursor: SystemMouseCursors.alias,
+                child: TextButton(
+                  onPressed: () async {
+                    final window =
+                        await DesktopMultiWindow.createWindow(jsonEncode({
+                      'args1': 'Sub window',
+                      'args2': 100,
+                      'args3': true,
+                      'bussiness': 'bussiness_test',
+                    }));
+                    window
+                      ..setFrame(const Offset(0, 0) & const Size(1280, 720))
+                      ..center()
+                      ..setTitle('Another window')
+                      ..show();
+                  },
+                  child: const Text('Create a new World!'),
+                ),
+              ),
+              TextButton(
+                child: const Text('Send event to all sub windows'),
+                onPressed: () async {
+                  final subWindowIds =
+                      await DesktopMultiWindow.getAllSubWindowIds();
+                  for (final windowId in subWindowIds) {
+                    DesktopMultiWindow.invokeMethod(
+                      windowId,
+                      'broadcast',
+                      'Broadcast from main window',
+                    );
                   }
                 },
-                future: WindowController.main().getXID(),
               ),
-            MouseRegion(
-              cursor: SystemMouseCursors.alias,
-              child: TextButton(
-                onPressed: () async {
-                  final window =
-                      await DesktopMultiWindow.createWindow(jsonEncode({
-                    'args1': 'Sub window',
-                    'args2': 100,
-                    'args3': true,
-                    'bussiness': 'bussiness_test',
-                  }));
-                  window
-                    ..setFrame(const Offset(0, 0) & const Size(1280, 720))
-                    ..center()
-                    ..setTitle('Another window')
-                    ..show();
-                },
-                child: const Text('Create a new World!'),
-              ),
-            ),
-            TextButton(
-              child: const Text('Send event to all sub windows'),
-              onPressed: () async {
-                final subWindowIds =
-                    await DesktopMultiWindow.getAllSubWindowIds();
-                for (final windowId in subWindowIds) {
-                  DesktopMultiWindow.invokeMethod(
-                    windowId,
-                    'broadcast',
-                    'Broadcast from main window',
-                  );
-                }
-              },
-            ),
-            Expanded(
-              child: EventWidget(controller: WindowController.fromWindowId(0)),
-            )
-          ],
+              Expanded(
+                child:
+                    EventWidget(controller: WindowController.fromWindowId(0)),
+              )
+            ],
+          ),
         ),
       ),
     );
