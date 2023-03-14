@@ -32,7 +32,8 @@ class SubWindowDragToResizeArea extends StatelessWidget {
     this.resizeEdgeColor = Colors.transparent,
     this.resizeEdgeSize = 8,
     this.resizeEdgeMargin = EdgeInsets.zero,
-    this.enableResizeEdges, this.childPadding = EdgeInsets.zero,
+    this.enableResizeEdges,
+    this.childPadding = EdgeInsets.zero,
   }) : super(key: key);
 
   Widget _buildDragToResizeEdge(
@@ -47,16 +48,18 @@ class SubWindowDragToResizeArea extends StatelessWidget {
       width: width,
       height: height,
       color: this.resizeEdgeColor,
-      child: MouseRegion(
-        cursor: cursor,
-        child: GestureDetector(
-          onPanStart: (_) =>
-              WindowController.fromWindowId(windowId).startResizing(resizeEdge),
-          onDoubleTap: () => (Platform.isWindows &&
-                  (resizeEdge == SubWindowResizeEdge.top ||
-                      resizeEdge == SubWindowResizeEdge.bottom))
-              ? WindowController.fromWindowId(windowId).maximize()
-              : null,
+      child: Listener(
+        onPointerDown: (_) =>
+            WindowController.fromWindowId(windowId).startResizing(resizeEdge),
+        child: MouseRegion(
+          cursor: cursor,
+          child: GestureDetector(
+            onDoubleTap: () => (Platform.isWindows &&
+                    (resizeEdge == SubWindowResizeEdge.top ||
+                        resizeEdge == SubWindowResizeEdge.bottom))
+                ? WindowController.fromWindowId(windowId).maximize()
+                : null,
+          ),
         ),
       ),
     );
