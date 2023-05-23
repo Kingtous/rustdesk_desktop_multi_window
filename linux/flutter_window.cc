@@ -96,6 +96,13 @@ FlutterWindow::FlutterWindow(
 
   gtk_widget_show(GTK_WIDGET(window_));
   gtk_widget_show(GTK_WIDGET(fl_view));
+
+  // Disconnect all delete-event handlers first in flutter 3.10.1, which causes delete_event not working.
+  // Issues from flutter/engine: https://github.com/flutter/engine/pull/40033 
+  guint handler_id = g_signal_handler_find(GTK_WIDGET(window_), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, fl_view);
+  if (handler_id > 0) {
+    g_signal_handler_disconnect(GTK_WIDGET(window_), handler_id);
+  }
   
   g_signal_connect(window_, "delete-event", G_CALLBACK(onWindowClose), this);
   g_signal_connect(window_, "window-state-event",
