@@ -63,6 +63,15 @@ class FlutterWindow : public BaseFlutterWindow {
 
   bool destroyed_ = false;
 
+  // Whether the engine has rendered its first frame. Used by the force-redraw
+  // timer that works around the window staying white when an external tool
+  // (e.g. PowerToys FancyZones) resizes it around startup/show (see the
+  // constructor).
+  bool first_frame_rendered_ = false;
+
+  // Number of force-redraw attempts made so far.
+  UINT force_redraw_tries_ = 0;
+
   static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
   static FlutterWindow *GetThisFromHandle(HWND window) noexcept;

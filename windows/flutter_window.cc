@@ -57,6 +57,22 @@ bool IsWindows11OrGreater() {
 
 namespace {
 
+// If the window is resized between the creation of the Flutter surface and the
+// present of the first frame - which is what the PowerToys FancyZones option
+// "Move newly created windows to their last known zone" does - the resize
+// synchronization of the Windows embedder can end up waiting for a frame that
+// is never scheduled, and the window stays white until something resends the
+// window metrics (e.g. minimize/restore).
+// https://github.com/rustdesk/rustdesk/issues/6756
+// https://github.com/flutter/flutter/issues/159630
+// Work around it by poking the engine with ForceRedraw() (which resends the
+// window metrics) until the first frame has been rendered.
+constexpr UINT_PTR kForceRedrawTimerId = 0xFB15;
+constexpr UINT kForceRedrawIntervalMs = 200;
+// Give up eventually, so a genuinely stuck engine doesn't keep a timer alive
+// forever. 25 * 200ms covers slow starts comfortably.
+constexpr UINT kForceRedrawMaxTries = 25;
+
 WindowCreatedCallback _g_window_created_callback = nullptr;
 
 TCHAR kFlutterWindowClassName[] = _T("RustdeskMultiWindow");
@@ -160,6 +176,11 @@ FlutterWindow::FlutterWindow(
     _g_window_created_callback(flutter_controller_.get());
   }
 
+  // See the comment on kForceRedrawTimerId above.
+  flutter_controller_->engine()->SetNextFrameCallback(
+      [this]() { first_frame_rendered_ = true; });
+  SetTimer(window_handle, kForceRedrawTimerId, kForceRedrawIntervalMs, nullptr);
+
   // hide the window when created.
   ShowWindow(window_handle, SW_HIDE);
 }
@@ -256,6 +277,18 @@ LRESULT FlutterWindow::MessageHandler(HWND hwnd, UINT message, WPARAM wparam, LP
     }
     case WM_FONTCHANGE: {
       flutter_controller_->engine()->ReloadSystemFonts();
+      break;
+    }
+    case WM_TIMER: {
+      if (wparam == kForceRedrawTimerId) {
+        if (first_frame_rendered_ || !flutter_controller_ ||
+            ++force_redraw_tries_ > kForceRedrawMaxTries) {
+          KillTimer(hwnd, kForceRedrawTimerId);
+        } else {
+          flutter_controller_->ForceRedraw();
+        }
+        return 0;
+      }
       break;
     }
     case WM_DESTROY:
@@ -399,6 +432,9 @@ void FlutterWindow::EmitEvent(const char* eventName)
 }
 
 void FlutterWindow::Destroy() {
+  if (window_handle_) {
+    KillTimer(window_handle_, kForceRedrawTimerId);
+  }
   tryInvokeChannelOnDestroy();
   if (window_channel_) {
     window_channel_ = nullptr;
