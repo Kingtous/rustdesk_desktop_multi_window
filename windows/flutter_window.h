@@ -68,10 +68,6 @@ class FlutterWindow : public BaseFlutterWindow {
   // it (see kForceRedrawTimerId in the .cc file).
   bool first_frame_rendered_ = false;
 
-  // Whether a resize arrived before the first frame was generated, i.e. the
-  // window may be stuck white with a rejected frame.
-  bool resized_before_first_frame_ = false;
-
   // Number of force-redraw attempts made so far.
   UINT force_redraw_tries_ = 0;
 
