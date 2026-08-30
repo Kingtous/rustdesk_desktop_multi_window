@@ -57,14 +57,6 @@ void BaseFlutterWindow::Hide() {
   gtk_window_resize(GTK_WINDOW(window), width, height);
 }
 
-bool BaseFlutterWindow::IsHidden() {
-  auto window = GetWindow();
-  if (!window) {
-    return false;
-  }
-  return !gtk_widget_is_visible(GTK_WIDGET(window));
-}
-
 void BaseFlutterWindow::Focus() {
   auto window = GetWindow();
   if (!window) {
@@ -162,15 +154,6 @@ bool BaseFlutterWindow::IsMaximized() {
   }
   GdkWindowState state = gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(window)));
   return state & GDK_WINDOW_STATE_MAXIMIZED;
-}
-
-bool BaseFlutterWindow::IsMinimized() {
-  auto window = GetWindow();
-  if (!window) {
-    return false;
-  }
-  GdkWindowState state = gdk_window_get_state(gtk_widget_get_window(GTK_WIDGET(window)));
-  return state & GDK_WINDOW_STATE_ICONIFIED;
 }
 
 void BaseFlutterWindow::Maximize() {

@@ -23,8 +23,6 @@ public:
 
   void Hide();
 
-  bool IsHidden();
-
   void Focus();
 
   bool IsFullScreen();
@@ -45,8 +43,6 @@ public:
   void Minimize();
 
   bool IsMaximized();
-
-  bool IsMinimized();
 
   void Maximize();
 

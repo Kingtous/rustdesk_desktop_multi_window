@@ -56,14 +56,6 @@ class MultiWindowManager {
     window.hide()
   }
 
-  func isHidden(windowId: Int64) -> Bool {
-    guard let window = windows[windowId] else {
-      debugPrint("window \(windowId) not exists.")
-      return true
-    }
-    return window.isHidden()
-  }
-
   func close(windowId: Int64) {
     guard let window = windows[windowId] else {
       debugPrint("window \(windowId) not exists.")
@@ -126,28 +118,12 @@ class MultiWindowManager {
     return window.isMaximized()
   }
 
-  func isMinimized(windowId: Int64) -> Bool {
-    guard let window = windows[windowId] else {
-      debugPrint("window \(windowId) not exists.")
-      return false
-    }
-    return window.isMinimized()
-  }
-
   func startDragging(windowId: Int64) {
     guard let window = windows[windowId] else {
       debugPrint("window \(windowId) not exists.")
       return
     }
     window.startDragging()
-  }
-
-  func setMovable(windowId: Int64, isMovable: Bool) {
-    guard let window = windows[windowId] else {
-      debugPrint("window \(windowId) not exists.")
-      return
-    }
-    window.setMovable(isMovable: isMovable)
   }
 
   func startResizing(windowId: Int64, arguments: [String: Any?]) {

@@ -101,14 +101,6 @@ void MultiWindowManager::Hide(int64_t id) {
   }
 }
 
-bool MultiWindowManager::IsHidden(int64_t id) {
-    auto window = windows_.find(id);
-    if (window != windows_.end()) {
-        return window->second->IsHidden();
-    }
-    return false;
-}
-
 void MultiWindowManager::Close(int64_t id) {
   auto window = windows_.find(id);
   if (window != windows_.end()) {
@@ -226,14 +218,6 @@ bool MultiWindowManager::IsMaximized(int64_t id) {
     return false;
 }
 
-bool MultiWindowManager::IsMinimized(int64_t id) {
-    auto window = windows_.find(id);
-    if (window != windows_.end()) {
-        return window->second->IsMinimized();
-    }
-    return false;
-}
-
 void MultiWindowManager::Unmaximize(int64_t id) {
     auto window = windows_.find(id);
     if (window != windows_.end()) {
@@ -277,11 +261,4 @@ bool MultiWindowManager::IsFullscreen(int64_t id) {
     return window->second->IsFullscreen();
   }
   return false;
-}
-
-void MultiWindowManager::SetInitBackgroundColor(int64_t id, const flutter::EncodableMap *args) {
-  auto window = windows_.find(id);
-  if (window != windows_.end()) {
-    return window->second->SetInitBackgroundColor(args);
-  }
 }

@@ -137,18 +137,6 @@ void MultiWindowManager::Hide(int64_t id) {
   UNLOCK_WINDOW;
 }
 
-bool MultiWindowManager::IsHidden(int64_t id) {
-  RLOCK_WINDOW;
-  auto window = windows_.find(id);
-  if (window != windows_.end()) {
-    bool ret = window->second->IsHidden();
-    UNLOCK_WINDOW;
-    return ret;
-  }
-  UNLOCK_WINDOW;
-  return false;
-}
-
 void MultiWindowManager::Close(int64_t id) {
   RLOCK_WINDOW;
   auto window = windows_.find(id);
@@ -257,17 +245,6 @@ bool MultiWindowManager::IsMaximized(int64_t id) {
   return false;
 }
 
-bool MultiWindowManager::IsMinimized(int64_t id) {
-  RLOCK_WINDOW;
-  auto window = windows_.find(id);
-  if (window != windows_.end()) {
-    UNLOCK_WINDOW;
-    return window->second->IsMinimized();
-  }
-  UNLOCK_WINDOW;
-  return false;
-}
-
 void MultiWindowManager::Unmaximize(int64_t id) {
   RLOCK_WINDOW;
   auto window = windows_.find(id);
@@ -289,7 +266,7 @@ void MultiWindowManager::ShowTitlebar(int64_t id, bool show) {
 void MultiWindowManager::OnWindowClose(int64_t id) {}
 
 void MultiWindowManager::OnWindowDestroy(int64_t id) {
-  std::cout << "destory id " << id << std::endl;
+  std::cout << "destory id" << id << std::endl;
   WLOCK_WINDOW;
   windows_.erase(id);
   UNLOCK_WINDOW;

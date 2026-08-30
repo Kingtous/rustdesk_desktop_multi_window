@@ -29,11 +29,6 @@ class WindowControllerMainImpl extends WindowController {
   }
 
   @override
-  Future<bool> isHidden() async {
-    return (await _channel.invokeMethod<bool>('isHidden', _id)) ?? false;
-  }
-
-  @override
   Future<void> show() {
     return _channel.invokeMethod('show', _id);
   }
@@ -103,22 +98,9 @@ class WindowControllerMainImpl extends WindowController {
     return _channel.invokeMethod('startDragging', _id);
   }
 
-  /// Sets whether the window can be moved by user.
-  ///
-  /// @platforms macos
-  /// @override
-  Future<void> setMovable(bool isMovable) async {
-    return _channel.invokeMethod('setMovable', <String, dynamic>{'windowId': _id, 'isMovable': isMovable});
-  }
-
   @override
   Future<bool> isMaximized() async {
     return (await _channel.invokeMethod<bool>('isMaximized', _id)) ?? false;
-  }
-
-  @override
-  Future<bool> isMinimized() async {
-    return (await _channel.invokeMethod<bool>('isMinimized', _id)) ?? false;
   }
 
   @override
@@ -178,29 +160,19 @@ class WindowControllerMainImpl extends WindowController {
     };
     await _channel.invokeMethod('setPreventClose', arguments);
   }
-
+  
   @override
   Future<int> getXID() async {
-    final Map<String, dynamic> arguments = {'windowId': _id};
+    final Map<String, dynamic> arguments = {
+      'windowId': _id
+    };
     return await _channel.invokeMethod<int>('getXID', arguments) ?? -1;
   }
-
+  
   @override
   Future<bool> isFullScreen() async {
     final Map<String, dynamic> arguments = {'windowId': _id};
     return await _channel.invokeMethod<bool>('isFullScreen', arguments) ??
         false;
-  }
-
-  @override
-  Future<void> setInitBackgroundColor(Color color) async {
-     final Map<String, dynamic> arguments = {
-      'windowId': _id,
-      'a': color.alpha,
-      'r': color.red,
-      'g': color.green,
-      'b': color.blue,
-    };
-    await _channel.invokeMethod('setInitBackgroundColor', arguments);
   }
 }

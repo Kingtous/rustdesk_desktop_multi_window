@@ -28,20 +28,11 @@ abstract class WindowController {
   /// Hide the window.
   Future<void> hide();
 
-  /// Judge if the window is hidden.
-  Future<bool> isHidden();
-
   /// Focus the window.
   Future<void> focus();
 
   /// Start dragging the window.
   Future<void> startDragging();
-
-  // https://github.com/rustdesk-org/window_manager/blob/f19acdb008645366339444a359a45c3257c8b32e/lib/src/window_manager.dart#L470
-  /// Sets whether the window can be moved by user.
-  ///
-  /// @platforms macos
-  Future<void> setMovable(bool isMovable);
 
   /// Maximize the window.
   Future<void> maximize();
@@ -51,9 +42,6 @@ abstract class WindowController {
 
   /// Judge if the window is maximized.
   Future<bool> isMaximized();
-
-  /// Judge if the window is minimized.
-  Future<bool> isMinimized();
 
   /// Minimize the window
   Future<void> minimize();
@@ -95,13 +83,7 @@ abstract class WindowController {
   Future<void> setPreventClose(bool isPreventClose);
 
   /// Get x11 id for specific window
-  ///
+  /// 
   /// This is only valid in x11/Linux.
   Future<int> getXID();
-
-  // https://github.com/rustdesk-org/rustdesk_desktop_multi_window/pull/26
-  /// Sets the background color before showing the window.
-  /// 
-  /// @platforms windows
-  Future<void> setInitBackgroundColor(Color color);
 }

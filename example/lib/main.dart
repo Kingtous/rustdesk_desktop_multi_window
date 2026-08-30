@@ -85,9 +85,6 @@ class _ExampleMainWindowState extends State<_ExampleMainWindow> {
                       'args3': true,
                       'bussiness': 'bussiness_test',
                     }));
-                    if (Platform.isWindows) {
-                      window.setInitBackgroundColor(Colors.green);
-                    }
                     window
                       ..setFrame(const Offset(0, 0) & const Size(1280, 720))
                       ..center()

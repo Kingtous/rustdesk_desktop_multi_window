@@ -45,10 +45,6 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
       let windowId = call.arguments as! Int64
       MultiWindowManager.shared.hide(windowId: windowId)
       result(nil)
-    case "isHidden":
-      let windowId = call.arguments as! Int64
-      let res = MultiWindowManager.shared.isHidden(windowId: windowId)
-      result(res)
     case "close":
       let windowId = call.arguments as! Int64
       MultiWindowManager.shared.close(windowId: windowId)
@@ -109,19 +105,9 @@ public class FlutterMultiWindowPlugin: NSObject, FlutterPlugin {
       let windowId = call.arguments as! Int64
       let res = MultiWindowManager.shared.isMaximized(windowId: windowId)
       result(res)
-    case "isMinimized":
-      let windowId = call.arguments as! Int64
-      let res = MultiWindowManager.shared.isMinimized(windowId: windowId)
-      result(res)
     case "startDragging":
       let windowId = call.arguments as! Int64
       MultiWindowManager.shared.startDragging(windowId: windowId)
-      result(nil)
-    case "setMovable":
-      let arguments = call.arguments as! [String: Any?]
-      let windowId = arguments["windowId"] as! Int64
-      let isMovable = arguments["isMovable"] as! Bool
-      MultiWindowManager.shared.setMovable(windowId: windowId, isMovable: isMovable)
       result(nil)
     case "showTitleBar":
       let arguments = call.arguments as! [String: Any?]

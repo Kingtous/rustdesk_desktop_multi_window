@@ -98,13 +98,6 @@ void BaseFlutterWindow::SetFullscreen(bool fullscreen) {
         g_title_bar_style_before_fullscreen = title_bar_style_;
         g_is_frameless_before_fullscreen = is_frameless_;
     }
-
-    if (IsWindowVisible(window) == TRUE) {
-      g_style_before_fullscreen = g_style_before_fullscreen | WS_VISIBLE;
-    } else {
-      g_style_before_fullscreen = g_style_before_fullscreen & ~WS_VISIBLE;
-    }
-
     // this variable should be set before telling windows to change the fullscreen status. 
     // Or the right and bottom area would be cut off after cancelling the fullscreen.
     g_is_window_fullscreen = fullscreen;
@@ -183,7 +176,7 @@ bool BaseFlutterWindow::IsMaximized() {
     WINDOWPLACEMENT windowPlacement;
     GetWindowPlacement(window, &windowPlacement);
 
-    return windowPlacement.showCmd == SW_SHOWMAXIMIZED;
+    return windowPlacement.showCmd == SW_MAXIMIZE;
 }
 
 void BaseFlutterWindow::Maximize() {
@@ -194,7 +187,7 @@ void BaseFlutterWindow::Maximize() {
     WINDOWPLACEMENT windowPlacement;
     GetWindowPlacement(window, &windowPlacement);
     // non vertical now
-    if (windowPlacement.showCmd != SW_SHOWMAXIMIZED) {
+    if (windowPlacement.showCmd != SW_MAXIMIZE) {
         PostMessage(window, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
     }
 }
@@ -207,7 +200,7 @@ void BaseFlutterWindow::Unmaximize() {
     WINDOWPLACEMENT windowPlacement;
     GetWindowPlacement(window, &windowPlacement);
 
-    if (windowPlacement.showCmd != SW_SHOWNORMAL) {
+    if (windowPlacement.showCmd != SW_NORMAL) {
         PostMessage(window, WM_SYSCOMMAND, SC_RESTORE, 0);
     }
 }
@@ -281,7 +274,7 @@ void BaseFlutterWindow::Maximize(const flutter::EncodableMap& args) {
             MAKELPARAM(cursorPos.x, cursorPos.y));
     }
     else {
-        if (windowPlacement.showCmd != SW_SHOWMAXIMIZED) {
+        if (windowPlacement.showCmd != SW_MAXIMIZE) {
             PostMessage(hwnd, WM_SYSCOMMAND, SC_MAXIMIZE, 0);
         }
     }
@@ -303,16 +296,6 @@ void BaseFlutterWindow::SetTitleBarStyle(const flutter::EncodableMap& args) {
         SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOMOVE | SWP_NOSIZE |
         SWP_FRAMECHANGED);
     // std::cout << "set title bar styled" << std::endl;
-}
-
-void BaseFlutterWindow::SetInitBackgroundColor(const flutter::EncodableMap *args) {
-  int colorA = std::get<int>(args->at(flutter::EncodableValue("a")));
-  int colorR = std::get<int>(args->at(flutter::EncodableValue("r")));
-  int colorG = std::get<int>(args->at(flutter::EncodableValue("g")));
-  int colorB = std::get<int>(args->at(flutter::EncodableValue("b")));
-  bool isTransparent = colorA == 0 && colorR == 0 && colorG == 0 && colorB == 0;
-  erase_transparent_ = isTransparent;
-  erase_background_color_ = RGB(colorR, colorG, colorB);
 }
 
 void BaseFlutterWindow::SetAsFrameless() {
@@ -337,7 +320,7 @@ void BaseFlutterWindow::Restore() {
   WINDOWPLACEMENT windowPlacement;
   GetWindowPlacement(handle, &windowPlacement);
 
-  if (windowPlacement.showCmd != SW_SHOWNORMAL) {
+  if (windowPlacement.showCmd != SW_NORMAL) {
     PostMessage(handle, WM_SYSCOMMAND, SC_RESTORE, 0);
   }
 }
@@ -346,22 +329,6 @@ void BaseFlutterWindow::SetBounds(double_t x, double_t y, double_t width, double
   auto handle = GetWindowHandle();
   if (!handle) {
     return;
-  }
-  // A simple workaround for the first problem https://github.com/rustdesk/rustdesk/issues/5791
-  // If is the first call to move window, we do not call ShowWindow(handle, SW_RESTORE), to avoid the blank window.
-  if (is_first_move_) {
-    is_first_move_ = false;
-  } else {
-    // We do need the following call or `SetWindowPlacement` to set the window `showCmd` value.
-    // MoveWindow will not change the `showCmd` value of `GetWindowPlacement`.
-    // So the state of the window will be wrong after the window is maximized or minimized and then moved.
-    WINDOWPLACEMENT windowPlacement;
-    GetWindowPlacement(handle, &windowPlacement);
-    if (windowPlacement.showCmd == SW_SHOWMAXIMIZED || windowPlacement.showCmd == SW_SHOWMINIMIZED) {
-      // Both `PostMessage(handle, WM_SYSCOMMAND, SC_RESTORE, 0);` and `ShowWindow(handle, SW_RESTORE);`
-      // have a side effect that the window will be show if it is hidden.
-      ShowWindow(handle, SW_RESTORE);
-    }
   }
   MoveWindow(handle, int32_t(x), int32_t(y),
              static_cast<int>(width),
@@ -421,14 +388,6 @@ void BaseFlutterWindow::Hide() {
     return;
   }
   ShowWindow(handle, SW_HIDE);
-}
-
-bool BaseFlutterWindow::IsHidden() { 
-    auto window = GetWindowHandle();
-    if (!window) {
-        return false;
-    }
-    return IsWindowVisible(window) != TRUE;
 }
 
 void BaseFlutterWindow::StartResizing(const flutter::EncodableMap *param) {

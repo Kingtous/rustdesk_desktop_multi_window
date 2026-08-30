@@ -30,10 +30,6 @@ class BaseFlutterWindow: NSObject {
     window.orderOut(nil)
   }
 
-  func isHidden() -> Bool {
-    return !window.isVisible
-  }
-
   func center() {
     window.center()
   }
@@ -62,10 +58,6 @@ class BaseFlutterWindow: NSObject {
 
   func isMaximized() -> Bool {
     return window.isZoomed
-  }
-
-  func isMinimized() -> Bool {
-    return window.isMiniaturized
   }
 
   func maximize() {
@@ -131,15 +123,10 @@ class BaseFlutterWindow: NSObject {
   func startDragging() {
     DispatchQueue.main.async {
       let this: NSWindow  = self.window
-      this.isMovable = true
       if(this.currentEvent != nil) {
           this.performDrag(with: this.currentEvent!)
       }
     }
-  }
-
-  func setMovable(isMovable: Bool) {
-    self.window.isMovable = isMovable
   }
 
   func startResizing(arguments: [String: Any?]) {

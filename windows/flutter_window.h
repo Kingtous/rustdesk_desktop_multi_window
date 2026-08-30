@@ -63,14 +63,6 @@ class FlutterWindow : public BaseFlutterWindow {
 
   bool destroyed_ = false;
 
-  // Whether the engine has generated its first frame. Note that a generated
-  // frame is not necessarily presented: the resize synchronization may reject
-  // it (see kForceRedrawTimerId in the .cc file).
-  bool first_frame_rendered_ = false;
-
-  // Number of force-redraw attempts made so far.
-  UINT force_redraw_tries_ = 0;
-
   static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
   static FlutterWindow *GetThisFromHandle(HWND window) noexcept;
@@ -80,42 +72,6 @@ class FlutterWindow : public BaseFlutterWindow {
   void Destroy();
 
   void EmitEvent(const char* eventName);
-
-  void tryInvokeChannelOnDestroy();
-
-  void adjustNCCALCSIZE(HWND hwnd, NCCALCSIZE_PARAMS *sz) {
-    LONG l = 8;
-    LONG t = 8;
-
-    // HMONITOR monitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
-    // Don't use `MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST)` above.
-    // Because if the window is restored from minimized state, the window is not in the correct monitor.
-    // The monitor is always the left-most monitor.
-    HMONITOR monitor = MonitorFromRect(&sz->rgrc[0], MONITOR_DEFAULTTONEAREST);
-    if (monitor != NULL)
-    {
-      MONITORINFO monitorInfo;
-      monitorInfo.cbSize = sizeof(MONITORINFO);
-      if (TRUE == GetMonitorInfo(monitor, &monitorInfo))
-      {
-        l = sz->rgrc[0].left - monitorInfo.rcWork.left;
-        t = sz->rgrc[0].top - monitorInfo.rcWork.top;
-      }
-      else
-      {
-        // GetMonitorInfo failed, use (8, 8) as default value
-      }
-    }
-    else
-    {
-      // unreachable code
-    }
-
-    sz->rgrc[0].left -= l;
-    sz->rgrc[0].top -= t;
-    sz->rgrc[0].right += l;
-    sz->rgrc[0].bottom += t;
-  }
 };
 
 #endif //DESKTOP_MULTI_WINDOW_WINDOWS_FLUTTER_WINDOW_H_

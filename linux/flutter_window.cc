@@ -14,8 +14,6 @@ extern void fl_register_plugins(FlPluginRegistry *registry);
 
 bool rustdesk_is_subwindow = false;
 
-GtkWidget *find_gl_area(GtkWidget *widget);
-
 namespace
 {
 
@@ -69,21 +67,6 @@ FlutterWindow::FlutterWindow(
 
   FlView* fl_view = fl_view_new(project);
   gtk_container_add(GTK_CONTAINER(window_), GTK_WIDGET(fl_view));
-
-  // https://github.com/flutter/flutter/issues/152154
-  // Remove this workaround when flutter version is updated.
-  GtkWidget *gl_area = find_gl_area(GTK_WIDGET(fl_view));
-  if (gl_area != NULL) {
-    gtk_gl_area_set_has_alpha(GTK_GL_AREA(gl_area), TRUE);
-  }
-
-  GdkScreen* screen_ = gtk_window_get_screen(GTK_WINDOW(window_));
-  GdkVisual *visual_;
-  gtk_widget_set_app_paintable(GTK_WIDGET(window_), TRUE);
-  visual_ = gdk_screen_get_rgba_visual(screen_);
-  if (visual_ != NULL && gdk_screen_is_composited(screen_)) {
-    gtk_widget_set_visual(GTK_WIDGET(window_), visual_);
-  }
 
   if (_g_window_created_callback)
   {
@@ -194,6 +177,7 @@ void _emitEvent(const char *event_name, FlutterWindow *self)
 gboolean onWindowClose(GtkWidget *widget, GdkEvent *, gpointer arg)
 {
   auto *self = static_cast<FlutterWindow *>(arg);
+  _emitEvent("close", self);
   // destory hook
   if (!self->isPreventClose)
   {
@@ -207,10 +191,6 @@ gboolean onWindowClose(GtkWidget *widget, GdkEvent *, gpointer arg)
       callback->OnWindowClose(self->id_);
       callback->OnWindowDestroy(self->id_);
     }
-  }
-  else
-  {
-    _emitEvent("close", self);
   }
   return self->isPreventClose;
 }
@@ -233,7 +213,6 @@ gboolean onWindowResize(GtkWidget *widget, gpointer data)
 {
   auto *self = static_cast<FlutterWindow *>(data);
   _emitEvent("resize", self);
-  _emitEvent("resized", self);
   return false;
 }
 
@@ -257,7 +236,6 @@ gboolean onWindowMove(GtkWidget *widget, GdkEvent *event, gpointer data)
 {
   auto *self = static_cast<FlutterWindow *>(data);
   _emitEvent("move", self);
-  _emitEvent("moved", self);
   return false;
 }
 
@@ -290,26 +268,4 @@ gboolean onWindowStateChange(GtkWidget *widget,
     }
   }
   return false;
-}
-
-GtkWidget *find_gl_area(GtkWidget *widget)
-{
-  if (GTK_IS_GL_AREA(widget)) {
-    return widget;
-  }
-
-  if (GTK_IS_CONTAINER(widget)) {
-    GList *children = gtk_container_get_children(GTK_CONTAINER(widget));
-    for (GList *iter = children; iter != NULL; iter = g_list_next(iter)) {
-      GtkWidget *child = GTK_WIDGET(iter->data);
-      GtkWidget *gl_area = find_gl_area(child);
-      if (gl_area != NULL) {
-        g_list_free(children);
-        return gl_area;
-      }
-    }
-    g_list_free(children);
-  }
-
-  return NULL;
 }

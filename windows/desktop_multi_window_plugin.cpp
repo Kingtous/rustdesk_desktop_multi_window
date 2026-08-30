@@ -65,11 +65,6 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
     MultiWindowManager::Instance()->Hide(window_id);
     result->Success();
     return;
-  } else if (method_call.method_name() == "isHidden") {
-    auto window_id = method_call.arguments()->LongValue();
-    auto res = MultiWindowManager::Instance()->IsHidden(window_id);
-    result->Success(flutter::EncodableValue(res));
-    return;
   } else if (method_call.method_name() == "close") {
     auto window_id = method_call.arguments()->LongValue();
     MultiWindowManager::Instance()->Close(window_id);
@@ -105,11 +100,6 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
     return;
   } else if (method_call.method_name() == "getAllSubWindowIds") {
     auto window_ids = MultiWindowManager::Instance()->GetAllSubWindowIds();
-    // window_ids must contain at least one element
-    // It seems a bug of flutter engine
-    if (window_ids.empty()) {
-      window_ids.push_back(0);
-    }
     result->Success(flutter::EncodableValue(window_ids));
     return;
   } else if (method_call.method_name() == "focus") {
@@ -157,11 +147,6 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
     auto res = MultiWindowManager::Instance()->IsMaximized(window_id);
     result->Success(flutter::EncodableValue(res));
     return;
-  } else if (method_call.method_name() == "isMinimized") {
-    auto window_id = method_call.arguments()->LongValue();
-    auto res = MultiWindowManager::Instance()->IsMinimized(window_id);
-    result->Success(flutter::EncodableValue(res));
-    return;
   } else if (method_call.method_name() == "showTitleBar") {
     auto *arguments =
         std::get_if<flutter::EncodableMap>(method_call.arguments());
@@ -193,11 +178,6 @@ void DesktopMultiWindowPlugin::HandleMethodCall(
     auto res = MultiWindowManager::Instance()->IsPreventClose(window_id);
     result->Success(flutter::EncodableValue(res));
     return;
-  } else if (method_call.method_name() == "setInitBackgroundColor") {
-    auto *arguments = std::get_if<flutter::EncodableMap>(method_call.arguments());
-    auto window_id = arguments->at(flutter::EncodableValue("windowId")).LongValue();
-    MultiWindowManager::Instance()->SetInitBackgroundColor(window_id, arguments);
-    return result->Success();
   }
   result->NotImplemented();
 }
